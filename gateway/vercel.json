@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/juegos", "destination": "https://juegosbenjamin.vercel.app/juegos" },
+    { "source": "/juegos/", "destination": "https://juegosbenjamin.vercel.app/juegos/" },
     { "source": "/juegos/:path*", "destination": "https://juegosbenjamin.vercel.app/juegos/:path*" },
     { "source": "/", "destination": "https://cumpleanos-benjamin.vercel.app/" },
     { "source": "/:path*", "destination": "https://cumpleanos-benjamin.vercel.app/:path*" }
