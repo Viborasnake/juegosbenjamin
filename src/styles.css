@@ -16,7 +16,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .brand h1 { font-size: clamp(3rem, 10vw, 6rem); line-height: .95; }
 
 .game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 1.7rem); }
-.game-card { position: relative; min-height: clamp(16rem, 42vw, 23rem); padding: clamp(1.4rem, 4vw, 2.2rem); border: 0; border-radius: 2.25rem; color: white; text-align: left; box-shadow: 0 .75rem 0 rgba(74, 51, 54, .12), 0 1.2rem 2.6rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
+.game-card { position: relative; min-height: clamp(17.5rem, 44vw, 24rem); padding: clamp(1.4rem, 4vw, 2.2rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2.25rem; color: white; text-align: left; box-shadow: 0 .75rem 0 rgba(74, 51, 54, .12), 0 1.2rem 2.6rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
 .game-card::after { content: ''; position: absolute; width: 10rem; height: 10rem; border-radius: 50%; background: rgba(255,255,255,.13); right: -2.5rem; top: -3rem; }
 .game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active { transform: translateY(.35rem) scale(.985); }
 button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
@@ -28,10 +28,11 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .game-card.coral { background: linear-gradient(145deg, #ff826d, #ef5366); }
 .game-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
-.game-icon { display: block; font-size: clamp(4.5rem, 14vw, 8rem); line-height: 1; margin-bottom: auto; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
-.game-copy { position: absolute; left: clamp(1.4rem, 4vw, 2.2rem); bottom: clamp(1.4rem, 4vw, 2.2rem); right: 1.5rem; display: flex; flex-direction: column; }
+.game-icon { position: relative; z-index: 1; display: block; font-size: clamp(4rem, 11vw, 6.8rem); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
+.game-card.numbers .game-icon { align-self: flex-end; font-size: clamp(3.6rem, 10vw, 6.1rem); }
+.game-copy { position: relative; z-index: 1; width: 100%; margin-top: 1.15rem; display: flex; flex-direction: column; }
 .game-copy small { font-size: clamp(.8rem, 2vw, 1rem); letter-spacing: .08em; font-weight: 800; opacity: .9; }
-.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1; }
+.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2.2rem, 5.4vw, 3.6rem); line-height: .95; }
 .play-label { margin-top: .55rem; font-size: 1.05rem; font-weight: 800; }
 .play-label b { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; margin-left: .25rem; border-radius: 50%; background: rgba(255,255,255,.2); }
 .grownup-note { margin: 2rem 0 0; text-align: center; color: #8a7881; font-size: .95rem; font-weight: 700; }
@@ -89,9 +90,9 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
   .home-shell { justify-content: flex-start; }
   .brand { justify-content: flex-start; margin-top: 1rem; margin-bottom: 2rem; }
   .game-grid, .subgame-grid { grid-template-columns: 1fr; }
-  .game-card { min-height: 12.5rem; }
+  .game-card { min-height: 13.5rem; }
   .subgame-card { min-height: 12rem; }
-  .game-icon, .subgame-card > span { font-size: 5rem; }
+  .game-icon, .subgame-card > span, .game-card.numbers .game-icon { font-size: 4.4rem; }
   .play-header { grid-template-columns: 3.7rem 1fr 3.7rem; gap: .35rem; }
   .back-button { width: 3.45rem; height: 3.45rem; font-size: 1.7rem; }
   .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles { grid-template-columns: repeat(3, minmax(0, 1fr)); }

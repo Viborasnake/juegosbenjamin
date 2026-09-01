@@ -69,6 +69,9 @@ const englishNames: Record<GameId, Record<string, string>> = {
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
 }
 
+const audioFile = (locale: Locale, game: GameId, position: number) =>
+  `${import.meta.env.BASE_URL}audio/${locale}/${game}/${position}.wav`
+
 function shuffle<T>(items: T[]) {
   const result = [...items]
   for (let index = result.length - 1; index > 0; index -= 1) {
@@ -172,7 +175,7 @@ function Home({ onSelect, locale, onLocale }: { onSelect: (category: CategoryId)
           const category = categoryMeta[categoryId]
           const title = category.title[locale]
           return (
-            <button className={`game-card ${category.color}`} key={categoryId} type="button"
+            <button className={`game-card ${category.color} ${categoryId}`} key={categoryId} type="button"
               onClick={() => onSelect(categoryId)} aria-label={`${locale === 'es' ? 'Jugar con' : 'Play with'} ${title}`}>
               <span className="game-icon" aria-hidden="true">{category.icon}</span>
               <span className="game-copy"><small>{category.eyebrow}</small><strong>{title}</strong>
@@ -226,7 +229,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
     const spokenText = locale === 'en' ? englishNames[game][card.symbol] ?? card.spoken_text : card.spoken_text
     if (!openCards.length) {
       setOpenCards([card.cardId])
-      speak(spokenText, card.symbol, `/audio/${locale}/${game}/${card.position}.wav`)
+      speak(spokenText, card.symbol, audioFile(locale, game, card.position))
       return
     }
     const firstCard = deck.find((candidate) => candidate.cardId === openCards[0])
@@ -238,7 +241,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
       setLocked(true)
       window.setTimeout(() => { setOpenCards([]); setLocked(false) }, 900)
     }
-    speak(spokenText, card.symbol, `/audio/${locale}/${game}/${card.position}.wav`)
+    speak(spokenText, card.symbol, audioFile(locale, game, card.position))
   }
 
   const won = memoryItems.length > 0 && matched.length === memoryItems.length
@@ -287,7 +290,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
-              type="button" onClick={() => speak(spoken(item), item.symbol, `/audio/${locale}/${game}/${item.position}.wav`)} aria-label={`${spoken(item)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
+              type="button" onClick={() => speak(spoken(item), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spoken(item)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
               <span>{item.symbol}</span><small aria-hidden="true">🔊</small>
             </button>
           ))}

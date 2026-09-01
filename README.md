@@ -16,4 +16,8 @@ Las pronunciaciones en español e inglés están incluidas en `public/audio`, pa
 
 ## Vercel
 
-Importa este repositorio en Vercel y agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`. La compilación ya está configurada en `vercel.json`.
+El juego se publica en `https://benjamin.frontbook.cl/juegos/` (el quiz de cumpleaños sigue en `https://benjamin.frontbook.cl/`). También queda en `https://juegosbenjamin.vercel.app/juegos/`.
+
+El proxy del dominio está en `gateway/`. No redespliega el quiz: solo reescribe `/juegos` hacia este proyecto y el resto hacia `cumpleanos-benjamin`.
+
+Agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` en el proyecto `juegosbenjamin` si quieres leer el contenido remoto.

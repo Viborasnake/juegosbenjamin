@@ -2,7 +2,14 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/", "destination": "/juegos/", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/juegos/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/juegos/audio/:path*", "destination": "/audio/:path*" },
+    { "source": "/juegos", "destination": "/index.html" },
+    { "source": "/juegos/", "destination": "/index.html" },
+    { "source": "/juegos/:path*", "destination": "/index.html" }
   ]
 }
