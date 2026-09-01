@@ -101,26 +101,56 @@ function useLearningItems() {
 function useSpeech(locale: Locale) {
   const [speaking, setSpeaking] = useState<string | null>(null)
   const clearTimer = useRef<number | undefined>(undefined)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const speak = useCallback((text: string, symbol: string) => {
-    if (!('speechSynthesis' in window)) return
+  const speak = useCallback((text: string, symbol: string, audioPath: string) => {
     window.clearTimeout(clearTimer.current)
-    window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(text)
-    const spanishVoice = window.speechSynthesis.getVoices().find((voice) => voice.lang.toLowerCase().startsWith('es'))
-    utterance.lang = locale === 'es' ? 'es-CL' : 'en-US'
-    utterance.rate = 0.72
-    utterance.pitch = 1.08
-    const matchingVoice = window.speechSynthesis.getVoices().find((voice) => voice.lang.toLowerCase().startsWith(locale))
-    utterance.voice = matchingVoice ?? spanishVoice ?? null
+    audioRef.current?.pause()
+    audioRef.current = null
     setSpeaking(symbol)
-    utterance.onend = () => setSpeaking(null)
-    utterance.onerror = () => setSpeaking(null)
-    window.speechSynthesis.speak(utterance)
-    clearTimer.current = window.setTimeout(() => setSpeaking(null), 2200)
+
+    const finish = () => setSpeaking((current) => current === symbol ? null : current)
+    let fallbackStarted = false
+    const playSystemVoice = () => {
+      if (fallbackStarted) return
+      fallbackStarted = true
+      if (!('speechSynthesis' in window)) { finish(); return }
+      try {
+        window.speechSynthesis.cancel()
+        const utterance = new SpeechSynthesisUtterance(text)
+        const language = locale === 'es' ? 'es-CL' : 'en-US'
+        const voices = window.speechSynthesis.getVoices()
+        const matchingVoice = voices.find((voice) => voice.lang.toLowerCase() === language.toLowerCase())
+          ?? voices.find((voice) => voice.lang.toLowerCase().startsWith(locale))
+        utterance.lang = language
+        utterance.rate = locale === 'es' ? 0.76 : 0.84
+        utterance.pitch = 1
+        utterance.voice = matchingVoice ?? null
+        utterance.onend = finish
+        utterance.onerror = finish
+        window.speechSynthesis.speak(utterance)
+        clearTimer.current = window.setTimeout(finish, 2200)
+      } catch {
+        finish()
+      }
+    }
+
+    try {
+      const audio = new Audio(audioPath)
+      audioRef.current = audio
+      audio.onended = finish
+      audio.onerror = playSystemVoice
+      void audio.play().catch(playSystemVoice)
+    } catch {
+      playSystemVoice()
+    }
   }, [locale])
 
-  useEffect(() => () => window.clearTimeout(clearTimer.current), [])
+  useEffect(() => () => {
+    window.clearTimeout(clearTimer.current)
+    audioRef.current?.pause()
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  }, [])
   return { speak, speaking }
 }
 
@@ -177,7 +207,7 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
   )
 }
 
-function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string) => void }) {
+function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
   const [round, setRound] = useState(0)
   const memoryItems = useMemo(() => shuffle(items).slice(0, 5), [items, round])
   const deck = useMemo(() => shuffle(memoryItems.flatMap((item) => [
@@ -191,8 +221,12 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
 
   const selectCard = (card: MemoryCard) => {
     if (locked || openCards.includes(card.cardId) || matched.includes(card.id)) return
-    speak(locale === 'en' ? englishNames[game][card.symbol] ?? card.spoken_text : card.spoken_text, card.symbol)
-    if (!openCards.length) { setOpenCards([card.cardId]); return }
+    const spokenText = locale === 'en' ? englishNames[game][card.symbol] ?? card.spoken_text : card.spoken_text
+    if (!openCards.length) {
+      setOpenCards([card.cardId])
+      speak(spokenText, card.symbol, `/audio/${locale}/${game}/${card.position}.wav`)
+      return
+    }
     const firstCard = deck.find((candidate) => candidate.cardId === openCards[0])
     setOpenCards([openCards[0], card.cardId])
     if (firstCard?.id === card.id) {
@@ -202,6 +236,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
       setLocked(true)
       window.setTimeout(() => { setOpenCards([]); setLocked(false) }, 900)
     }
+    speak(spokenText, card.symbol, `/audio/${locale}/${game}/${card.position}.wav`)
   }
 
   const won = memoryItems.length > 0 && matched.length === memoryItems.length
@@ -230,7 +265,10 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
   const [mode, setMode] = useState<Mode>('explore')
   const { speak, speaking } = useSpeech(locale)
   const meta = gameMeta[game]
-  const gameItems = items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ'))
+  const gameItems = useMemo(
+    () => items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ')),
+    [game, items, locale],
+  )
   const spoken = (item: LearningItem) => locale === 'en' ? englishNames[game][item.symbol] ?? item.spoken_text : item.spoken_text
   return (
     <main className={`play-shell theme-${meta.color}`}>
@@ -247,7 +285,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
-              type="button" onClick={() => speak(spoken(item), item.symbol)} aria-label={`${spoken(item)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
+              type="button" onClick={() => speak(spoken(item), item.symbol, `/audio/${locale}/${game}/${item.position}.wav`)} aria-label={`${spoken(item)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
               <span>{item.symbol}</span><small aria-hidden="true">🔊</small>
             </button>
           ))}
