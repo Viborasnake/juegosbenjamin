@@ -59,9 +59,11 @@ const gameMeta = {
   vehicles: { title: { es: 'Vehículos', en: 'Vehicles' }, prompt: { es: 'Toca un vehículo', en: 'Tap a vehicle' }, icon: '🚗', color: 'orange' },
 } as const
 
+const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'why', 'zee']
+
 const englishNames: Record<GameId, Record<string, string>> = {
-  vowels: { A: 'A', E: 'E', I: 'I', O: 'O', U: 'U' },
-  alphabet: Object.fromEntries('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) => [letter, letter])),
+  vowels: { A: 'ay', E: 'ee', I: 'eye', O: 'oh', U: 'you' },
+  alphabet: Object.fromEntries('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter, index) => [letter, englishLetterNames[index]])),
   numbers: Object.fromEntries(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'].map((name, index) => [String(index + 1), name])),
   animals: Object.fromEntries(['dog', 'cat', 'cow', 'pig', 'horse', 'sheep', 'elephant', 'lion', 'monkey', 'frog'].map((name, index) => [animals[index][0], name])),
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
