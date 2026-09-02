@@ -3,7 +3,7 @@ import { supabase } from './lib/supabase'
 
 type CategoryId = 'letters' | 'numbers' | 'world' | 'planets'
 type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'planets'
-type Mode = 'explore' | 'memory' | 'find'
+type Mode = 'explore' | 'memory' | 'find' | 'space'
 type Locale = 'es' | 'en'
 
 type LearningItem = {
@@ -383,6 +383,72 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
   )
 }
 
+const solarOrbits = [
+  { symbol: 'mercurio', orbit: '22%', size: '5%', duration: '16s', start: '-4s' },
+  { symbol: 'venus', orbit: '30%', size: '6.2%', duration: '22s', start: '-11s' },
+  { symbol: 'tierra', orbit: '38%', size: '6.8%', duration: '30s', start: '-18s', moon: true },
+  { symbol: 'marte', orbit: '46%', size: '5.6%', duration: '38s', start: '-7s' },
+  { symbol: 'asteroide', orbit: '54%', size: '4.6%', duration: '46s', start: '-21s' },
+  { symbol: 'jupiter', orbit: '64%', size: '9.5%', duration: '56s', start: '-13s' },
+  { symbol: 'saturno', orbit: '75%', size: '11%', duration: '68s', start: '-29s' },
+  { symbol: 'urano', orbit: '84%', size: '7.4%', duration: '82s', start: '-9s' },
+  { symbol: 'neptuno', orbit: '91%', size: '7.2%', duration: '96s', start: '-40s' },
+  { symbol: 'pluton', orbit: '97%', size: '3.8%', duration: '114s', start: '-55s' },
+] as const
+
+function SpaceGame({ items, locale, speak, speaking }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void; speaking: string | null }) {
+  const bySymbol = useMemo(() => Object.fromEntries(items.map((item) => [item.symbol, item])), [items])
+  const sun = bySymbol.sol
+  const play = (item?: LearningItem) => {
+    if (!item) return
+    speak(spokenFor(item, locale), item.symbol, audioFile(locale, item.game, item.position))
+  }
+  const stars = useMemo(() => Array.from({ length: 28 }, (_, index) => ({
+    left: `${(index * 37) % 100}%`,
+    top: `${(index * 53) % 100}%`,
+    size: index % 5 === 0 ? 3 : 2,
+    delay: `${(index % 7) * 0.8}s`,
+  })), [])
+
+  return (
+    <section className="space-stage" aria-label={locale === 'es' ? 'Sistema solar' : 'Solar system'}>
+      {stars.map((star, index) => (
+        <span className="space-star" key={index} style={{ left: star.left, top: star.top, width: star.size, height: star.size, animationDelay: star.delay }} />
+      ))}
+      <div className="space-system">
+        {sun ? (
+          <button className={`space-sun ${speaking === sun.symbol ? 'is-speaking' : ''}`} type="button"
+            onClick={() => play(sun)} aria-label={titleName(sun, locale)}>
+            <img src={`${import.meta.env.BASE_URL}planets/sol.png`} alt="" draggable={false} />
+          </button>
+        ) : null}
+        {solarOrbits.map((orbit) => {
+          const item = bySymbol[orbit.symbol]
+          if (!item) return null
+          const moon = 'moon' in orbit && orbit.moon ? bySymbol.luna : undefined
+          return (
+            <div className="space-orbit" key={orbit.symbol} style={{ width: orbit.orbit, height: orbit.orbit, animationDuration: orbit.duration, animationDelay: orbit.start }}>
+              <button className={`space-body ${speaking === item.symbol ? 'is-speaking' : ''}`} type="button"
+                style={{ width: orbit.size, height: orbit.size, animationDuration: orbit.duration, animationDelay: orbit.start }}
+                onClick={(event) => { event.stopPropagation(); play(item) }} aria-label={titleName(item, locale)}>
+                <img src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
+                {moon ? (
+                  <span className="space-moon-path" aria-hidden="true">
+                    <button className={`space-moon ${speaking === moon.symbol ? 'is-speaking' : ''}`} type="button"
+                      onClick={(event) => { event.stopPropagation(); play(moon) }} aria-label={titleName(moon, locale)}>
+                      <img src={`${import.meta.env.BASE_URL}planets/luna.png`} alt="" draggable={false} />
+                    </button>
+                  </span>
+                ) : null}
+              </button>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
 function Game({ game, items, locale, onBack }: { game: GameId; items: LearningItem[]; locale: Locale; onBack: () => void }) {
   const [mode, setMode] = useState<Mode>('explore')
   const { speak, speaking } = useSpeech(locale)
@@ -392,16 +458,19 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
     [game, items, locale],
   )
   return (
-    <main className={`play-shell theme-${meta.color}`}>
+    <main className={`play-shell theme-${meta.color} ${mode === 'space' ? 'is-space' : ''}`}>
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
-        <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : mode === 'find' ? (locale === 'es' ? '¿Dónde está?' : 'Where is it?') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
+        <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : mode === 'find' ? (locale === 'es' ? '¿Dónde está?' : 'Where is it?') : mode === 'space' ? (locale === 'es' ? 'Toca un planeta' : 'Tap a planet') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
         <span className="header-slot" aria-hidden="true" />
       </header>
       <nav className="mode-switch" aria-label="Modo de juego">
         <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
         <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
         <button className={mode === 'find' ? 'active' : ''} type="button" onClick={() => setMode('find')}>🔎 {locale === 'es' ? 'Encuentra' : 'Find'}</button>
+        {game === 'planets' ? (
+          <button className={mode === 'space' ? 'active' : ''} type="button" onClick={() => setMode('space')}>🌌 {locale === 'es' ? 'Espacio' : 'Space'}</button>
+        ) : null}
       </nav>
       {mode === 'explore' ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
@@ -415,6 +484,8 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
         </section>
       ) : mode === 'find' ? (
         <FindGame items={gameItems} locale={locale} speak={speak} />
+      ) : mode === 'space' ? (
+        <SpaceGame items={gameItems} locale={locale} speak={speak} speaking={speaking} />
       ) : (
         <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} />
       )}
