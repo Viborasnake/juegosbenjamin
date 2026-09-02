@@ -327,7 +327,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
               type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
-              <span>{item.symbol}</span><small aria-hidden="true">🔊</small>
+              <span>{item.symbol}</span>
             </button>
           ))}
         </section>
