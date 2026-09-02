@@ -1,7 +1,7 @@
 -- Contenido educativo público y sin datos personales.
 create table if not exists public.learning_items (
   id bigint primary key generated always as identity,
-  game text not null check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food')),
+  game text not null check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food', 'emotions')),
   symbol text not null,
   spoken_text text not null,
   position smallint not null check (position > 0),
@@ -11,7 +11,7 @@ create table if not exists public.learning_items (
 
 alter table public.learning_items drop constraint if exists learning_items_game_check;
 alter table public.learning_items add constraint learning_items_game_check
-  check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food'));
+  check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food', 'emotions'));
 
 alter table public.learning_items enable row level security;
 revoke all on table public.learning_items from anon, authenticated;
@@ -46,6 +46,9 @@ values
   ('vehicles', '🚢', 'barco', 7), ('vehicles', '🚜', 'tractor', 8), ('vehicles', '🚒', 'camión de bomberos', 9), ('vehicles', '🏍️', 'moto', 10),
   ('food', '🍎', 'manzana', 1), ('food', '🍌', 'plátano', 2), ('food', '🍓', 'frutilla', 3),
   ('food', '🍊', 'naranja', 4), ('food', '🍇', 'uva', 5), ('food', '🍉', 'sandía', 6),
-  ('food', '🥕', 'zanahoria', 7), ('food', '🍅', 'tomate', 8), ('food', '🌽', 'choclo', 9), ('food', '🥔', 'papa', 10)
+  ('food', '🥕', 'zanahoria', 7), ('food', '🍅', 'tomate', 8), ('food', '🌽', 'choclo', 9), ('food', '🥔', 'papa', 10),
+  ('emotions', '😄', 'feliz', 1), ('emotions', '😢', 'triste', 2), ('emotions', '😠', 'enojado', 3),
+  ('emotions', '😨', 'asustado', 4), ('emotions', '😲', 'sorprendido', 5), ('emotions', '😴', 'cansado', 6),
+  ('emotions', '🥰', 'cariño', 7), ('emotions', '😳', 'tímido', 8), ('emotions', '😂', 'risa', 9), ('emotions', '😌', 'tranquilo', 10)
 on conflict (game, symbol) do update
 set spoken_text = excluded.spoken_text, position = excluded.position;

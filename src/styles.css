@@ -26,6 +26,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .green, .theme-green { --accent: #38a88b; --accent-deep: #26806b; --soft: #eafaf4; }
 .theme-orange { --accent: #ee8b3e; --accent-deep: #c96a25; --soft: #fff4e8; }
 .theme-yellow { --accent: #8fbf3a; --accent-deep: #6a9628; --soft: #f3fbe6; }
+.theme-pink { --accent: #e56aa5; --accent-deep: #c24b86; --soft: #fff0f6; }
 .game-card.coral { background: linear-gradient(145deg, #ff826d, #ef5366); }
 .game-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
@@ -49,7 +50,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .header-slot { display: block; min-height: 1px; }
 
 .subgame-grid { width: min(100%, 980px); margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
-.subgame-grid.world { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .subgame-card { min-height: 19rem; padding: 2rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .7rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
 .subgame-card > span { margin-bottom: auto; font-size: 5rem; }
 .subgame-card small { font-size: .9rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
@@ -60,6 +61,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .animals-choice { background: linear-gradient(145deg, #5fcba7, #2e9f82); }
 .vehicles-choice { background: linear-gradient(145deg, #ffad5c, #e97838); }
 .food-choice { background: linear-gradient(145deg, #c5d85a, #7bb63c); }
+.emotions-choice { background: linear-gradient(145deg, #ff8eb8, #e45a9a); }
 
 .mode-switch { width: fit-content; margin: 0 auto clamp(1.2rem, 4vw, 2rem); padding: .35rem; display: flex; gap: .35rem; border-radius: 1.2rem; background: rgba(255,255,255,.7); }
 .mode-switch button { min-height: 3.3rem; padding: .65rem clamp(.85rem, 3vw, 1.6rem); border: 0; border-radius: .95rem; background: transparent; color: #756675; font-size: clamp(.92rem, 2.4vw, 1.05rem); font-weight: 800; cursor: pointer; }
@@ -68,7 +70,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-grid { width: min(100%, 980px); margin: 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.65rem, 2vw, 1.25rem); }
 .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.learning-grid.animals, .learning-grid.vehicles, .learning-grid.food { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .learning-card { min-height: clamp(7.5rem, 17vw, 12rem); border: 0; border-radius: clamp(1.15rem, 3vw, 1.8rem); background: white; color: var(--accent-deep); box-shadow: 0 .5rem 0 color-mix(in srgb, var(--accent) 22%, transparent), 0 .9rem 1.7rem rgba(74,52,62,.08); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
 .learning-card span { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(3.3rem, 9vw, 6rem); font-weight: 800; line-height: 1; }
 .learning-card small { display: block; margin-top: .25rem; font-size: clamp(1rem, 2.5vw, 1.35rem); opacity: .65; }
@@ -103,7 +105,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
   .game-icon, .subgame-card > span, .game-card.numbers .game-icon { font-size: 4.4rem; }
   .play-header { grid-template-columns: 3.45rem 1fr 6.6rem; gap: .35rem; }
   .back-button { width: 3.45rem; height: 3.45rem; font-size: 1.7rem; }
-  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .learning-card { min-height: 7.2rem; }
 }
 

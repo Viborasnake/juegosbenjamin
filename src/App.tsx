@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './lib/supabase'
 
 type CategoryId = 'letters' | 'numbers' | 'world' | 'mix'
-type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'mix'
+type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'mix'
 type Mode = 'explore' | 'memory'
 type Locale = 'es' | 'en'
 
@@ -27,6 +27,7 @@ const numberNames = ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', '
 const animals = [['🐶', 'perro'], ['🐱', 'gato'], ['🐮', 'vaca'], ['🐷', 'chancho'], ['🐴', 'caballo'], ['🐑', 'oveja'], ['🐘', 'elefante'], ['🦁', 'león'], ['🐵', 'mono'], ['🐸', 'rana']]
 const vehicles = [['🚗', 'auto'], ['🚌', 'autobús'], ['🚂', 'tren'], ['🚲', 'bicicleta'], ['✈️', 'avión'], ['🚁', 'helicóptero'], ['🚢', 'barco'], ['🚜', 'tractor'], ['🚒', 'camión de bomberos'], ['🏍️', 'moto']]
 const foods = [['🍎', 'manzana'], ['🍌', 'plátano'], ['🍓', 'frutilla'], ['🍊', 'naranja'], ['🍇', 'uva'], ['🍉', 'sandía'], ['🥕', 'zanahoria'], ['🍅', 'tomate'], ['🌽', 'choclo'], ['🥔', 'papa']]
+const emotions = [['😄', 'feliz'], ['😢', 'triste'], ['😠', 'enojado'], ['😨', 'asustado'], ['😲', 'sorprendido'], ['😴', 'cansado'], ['🥰', 'cariño'], ['😳', 'tímido'], ['😂', 'risa'], ['😌', 'tranquilo']]
 
 const fallbackItems: LearningItem[] = [
   ...['A', 'E', 'I', 'O', 'U'].map((symbol, index) => ({
@@ -47,12 +48,15 @@ const fallbackItems: LearningItem[] = [
   ...foods.map(([symbol, spoken_text], index) => ({
     id: index + 501, game: 'food' as const, symbol, spoken_text, position: index + 1,
   })),
+  ...emotions.map(([symbol, spoken_text], index) => ({
+    id: index + 601, game: 'emotions' as const, symbol, spoken_text, position: index + 1,
+  })),
 ]
 
 const categoryMeta = {
   letters: { eyebrow: 'A · B · C', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
-  world: { eyebrow: '🐶 · 🍎 · 🚗', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
+  world: { eyebrow: '🐶 · 🍎 · 😄', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
   mix: { eyebrow: '🐶 · A · 🍎', title: { es: 'Memorice', en: 'Memory' }, icon: '🧠', color: 'purple' },
 } as const
 
@@ -63,6 +67,7 @@ const gameMeta = {
   animals: { title: { es: 'Animales', en: 'Animals' }, prompt: { es: 'Toca un animal', en: 'Tap an animal' }, icon: '🐶', color: 'green' },
   vehicles: { title: { es: 'Vehículos', en: 'Vehicles' }, prompt: { es: 'Toca un vehículo', en: 'Tap a vehicle' }, icon: '🚗', color: 'orange' },
   food: { title: { es: 'Frutas y verduras', en: 'Fruit & veg' }, prompt: { es: 'Toca una fruta o verdura', en: 'Tap a fruit or veggie' }, icon: '🍎', color: 'yellow' },
+  emotions: { title: { es: 'Emociones', en: 'Emotions' }, prompt: { es: 'Toca una emoción', en: 'Tap a feeling' }, icon: '😄', color: 'pink' },
   mix: { title: { es: 'Memorice', en: 'Memory' }, prompt: { es: 'Encuentra las parejas', en: 'Find the pairs' }, icon: '🧠', color: 'purple' },
 } as const
 
@@ -75,6 +80,7 @@ const englishNames: Record<GameId, Record<string, string>> = {
   animals: Object.fromEntries(['dog', 'cat', 'cow', 'pig', 'horse', 'sheep', 'elephant', 'lion', 'monkey', 'frog'].map((name, index) => [animals[index][0], name])),
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
   food: Object.fromEntries(['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato'].map((name, index) => [foods[index][0], name])),
+  emotions: Object.fromEntries(['happy', 'sad', 'angry', 'scared', 'surprised', 'sleepy', 'love', 'shy', 'laughing', 'calm'].map((name, index) => [emotions[index][0], name])),
   mix: {},
 }
 
@@ -114,7 +120,7 @@ function useLearningItems() {
       .then(({ data, error }) => {
         if (!active || error || !data?.length) return
         const valid = data.filter((item): item is LearningItem =>
-          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food'].includes(item.game))
+          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food', 'emotions'].includes(item.game))
         if (valid.length) {
           const remoteGames = new Set(valid.map((item) => item.game))
           setItems([...valid, ...fallbackItems.filter((item) => !remoteGames.has(item.game))])
@@ -226,6 +232,7 @@ const subgames: Record<'letters' | 'world', { id: GameId; icon: string; hint: st
     { id: 'animals', icon: '🐶', hint: '🐶 · 🐱 · 🐮', choiceClass: 'animals-choice' },
     { id: 'vehicles', icon: '🚗', hint: '🚗 · 🚌 · 🚂', choiceClass: 'vehicles-choice' },
     { id: 'food', icon: '🍎', hint: '🍎 · 🥕 · 🍌', choiceClass: 'food-choice' },
+    { id: 'emotions', icon: '😄', hint: '😄 · 😢 · 😠', choiceClass: 'emotions-choice' },
   ],
 }
 
@@ -349,7 +356,7 @@ export default function App() {
   const items = useLearningItems()
 
   const goHome = () => { window.history.replaceState(null, '', window.location.pathname); setGame(null); setCategory(null) }
-  const goBack = () => ['vowels', 'alphabet', 'animals', 'vehicles', 'food'].includes(game ?? '') ? setGame(null) : goHome()
+  const goBack = () => ['vowels', 'alphabet', 'animals', 'vehicles', 'food', 'emotions'].includes(game ?? '') ? setGame(null) : goHome()
   const selectCategory = (next: CategoryId) => {
     setCategory(next)
     if (next === 'numbers') setGame('numbers')
