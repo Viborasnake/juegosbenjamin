@@ -97,6 +97,11 @@ const spokenFor = (item: LearningItem, locale: Locale) =>
 const shownSymbol = (item: LearningItem) =>
   item.game === 'vowels' || item.game === 'alphabet' ? item.symbol.toLocaleLowerCase('es') : item.symbol
 
+const titleName = (item: LearningItem, locale: Locale) => {
+  const name = spokenFor(item, locale)
+  return name.charAt(0).toLocaleUpperCase('es') + name.slice(1)
+}
+
 function ItemArt({ item }: { item: LearningItem }) {
   if (item.game === 'planets') {
     return <img className="item-art" src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
@@ -302,7 +307,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
               key={card.cardId} type="button" onClick={() => selectCard(card)}
               aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
               <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
-              <span className="card-front"><ItemArt item={card} /></span>
+              <span className="card-front">{card.game === 'planets' ? <><ItemArt item={card} /><small className="card-name">{titleName(card, locale)}</small></> : <ItemArt item={card} />}</span>
             </button>
           )
         })}
@@ -335,9 +340,10 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
       {mode === 'explore' ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
-            <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
+            <button className={`learning-card ${item.game === 'planets' ? 'has-art' : ''} ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
               type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
-              <span><ItemArt item={item} /></span>
+              <span className="card-art"><ItemArt item={item} /></span>
+              {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
             </button>
           ))}
         </section>
