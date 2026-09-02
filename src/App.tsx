@@ -102,6 +102,9 @@ const titleName = (item: LearningItem, locale: Locale) => {
   return name.charAt(0).toLocaleUpperCase('es') + name.slice(1)
 }
 
+const promptLabel = (item: LearningItem, locale: Locale) =>
+  item.game === 'vowels' || item.game === 'alphabet' ? shownSymbol(item) : titleName(item, locale)
+
 function ItemArt({ item }: { item: LearningItem }) {
   if (item.game === 'planets') {
     return <img className={`item-art planet-${item.symbol}`} src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
@@ -357,9 +360,9 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
   if (!target) return null
   return (
     <section className="find-wrap" aria-label={locale === 'es' ? 'Encuentra' : 'Find it'}>
-      <button className="find-prompt" type="button" onClick={ask} aria-label={`${locale === 'es' ? 'Escuchar' : 'Listen'} ${titleName(target, locale)}`}>
+      <button className="find-prompt" type="button" onClick={ask} aria-label={`${locale === 'es' ? 'Escuchar' : 'Listen'} ${promptLabel(target, locale)}`}>
         <small>{locale === 'es' ? '¿Dónde está?' : 'Where is it?'}</small>
-        <strong>{titleName(target, locale)}</strong>
+        <strong>{promptLabel(target, locale)}</strong>
       </button>
       <div className="find-choices">
         {choices.map((item) => (
