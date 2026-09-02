@@ -21,15 +21,17 @@ const foodEs = ['manzana', 'plátano', 'frutilla', 'naranja', 'uva', 'sandía', 
 const foodEn = ['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato']
 const emotionsEs = ['feliz', 'triste', 'enojado', 'asustado', 'sorprendido', 'cansado', 'cariño', 'tímido', 'risa', 'tranquilo']
 const emotionsEn = ['happy', 'sad', 'angry', 'scared', 'surprised', 'sleepy', 'love', 'shy', 'laughing', 'calm']
+const planetsEs = ['sol', 'tierra', 'luna', 'marte', 'saturno', 'júpiter', 'neptuno', 'venus', 'mercurio', 'cometa']
+const planetsEn = ['sun', 'earth', 'moon', 'mars', 'saturn', 'jupiter', 'neptune', 'venus', 'mercury', 'comet']
 
 const collections = {
   es: {
     voice: 'Paulina',
-    games: { vowels: ['a', 'e', 'i', 'o', 'u'], alphabet: alphabetEs, numbers: numbersEs, animals: animalsEs, vehicles: vehiclesEs, food: foodEs, emotions: emotionsEs },
+    games: { vowels: ['a', 'e', 'i', 'o', 'u'], alphabet: alphabetEs, numbers: numbersEs, animals: animalsEs, vehicles: vehiclesEs, food: foodEs, emotions: emotionsEs, planets: planetsEs },
   },
   en: {
     voice: 'Samantha',
-    games: { vowels: ['ay', 'ee', 'eye', 'oh', 'you'], alphabet: alphabetEn, numbers: numbersEn, animals: animalsEn, vehicles: vehiclesEn, food: foodEn, emotions: emotionsEn },
+    games: { vowels: ['ay', 'ee', 'eye', 'oh', 'you'], alphabet: alphabetEn, numbers: numbersEn, animals: animalsEn, vehicles: vehiclesEn, food: foodEn, emotions: emotionsEn, planets: planetsEn },
   },
 }
 

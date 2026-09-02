@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './lib/supabase'
 
-type CategoryId = 'letters' | 'numbers' | 'world' | 'mix'
-type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'mix'
+type CategoryId = 'letters' | 'numbers' | 'world' | 'planets'
+type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'planets'
 type Mode = 'explore' | 'memory'
 type Locale = 'es' | 'en'
 
@@ -28,6 +28,7 @@ const animals = [['🐶', 'perro'], ['🐱', 'gato'], ['🐮', 'vaca'], ['🐷',
 const vehicles = [['🚗', 'auto'], ['🚌', 'autobús'], ['🚂', 'tren'], ['🚲', 'bicicleta'], ['✈️', 'avión'], ['🚁', 'helicóptero'], ['🚢', 'barco'], ['🚜', 'tractor'], ['🚒', 'camión de bomberos'], ['🏍️', 'moto']]
 const foods = [['🍎', 'manzana'], ['🍌', 'plátano'], ['🍓', 'frutilla'], ['🍊', 'naranja'], ['🍇', 'uva'], ['🍉', 'sandía'], ['🥕', 'zanahoria'], ['🍅', 'tomate'], ['🌽', 'choclo'], ['🥔', 'papa']]
 const emotions = [['😄', 'feliz'], ['😢', 'triste'], ['😠', 'enojado'], ['😨', 'asustado'], ['😲', 'sorprendido'], ['😴', 'cansado'], ['🥰', 'cariño'], ['😳', 'tímido'], ['😂', 'risa'], ['😌', 'tranquilo']]
+const planets = [['☀️', 'sol'], ['🌍', 'tierra'], ['🌙', 'luna'], ['🔴', 'marte'], ['🪐', 'saturno'], ['🟠', 'júpiter'], ['🔵', 'neptuno'], ['🟡', 'venus'], ['⚪', 'mercurio'], ['☄️', 'cometa']]
 
 const fallbackItems: LearningItem[] = [
   ...['A', 'E', 'I', 'O', 'U'].map((symbol, index) => ({
@@ -51,13 +52,16 @@ const fallbackItems: LearningItem[] = [
   ...emotions.map(([symbol, spoken_text], index) => ({
     id: index + 601, game: 'emotions' as const, symbol, spoken_text, position: index + 1,
   })),
+  ...planets.map(([symbol, spoken_text], index) => ({
+    id: index + 701, game: 'planets' as const, symbol, spoken_text, position: index + 1,
+  })),
 ]
 
 const categoryMeta = {
   letters: { eyebrow: 'A · B · C', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
   world: { eyebrow: '🐶 · 🍎 · 😄', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
-  mix: { eyebrow: '🐶 · A · 🍎', title: { es: 'Memorice', en: 'Memory' }, icon: '🧠', color: 'purple' },
+  planets: { eyebrow: '☀️ · 🌍 · 🪐', title: { es: 'Planetas', en: 'Planets' }, icon: '🪐', color: 'navy' },
 } as const
 
 const gameMeta = {
@@ -68,7 +72,7 @@ const gameMeta = {
   vehicles: { title: { es: 'Vehículos', en: 'Vehicles' }, prompt: { es: 'Toca un vehículo', en: 'Tap a vehicle' }, icon: '🚗', color: 'orange' },
   food: { title: { es: 'Frutas y verduras', en: 'Fruit & veg' }, prompt: { es: 'Toca una fruta o verdura', en: 'Tap a fruit or veggie' }, icon: '🍎', color: 'yellow' },
   emotions: { title: { es: 'Emociones', en: 'Emotions' }, prompt: { es: 'Toca una emoción', en: 'Tap a feeling' }, icon: '😄', color: 'pink' },
-  mix: { title: { es: 'Memorice', en: 'Memory' }, prompt: { es: 'Encuentra las parejas', en: 'Find the pairs' }, icon: '🧠', color: 'purple' },
+  planets: { title: { es: 'Planetas', en: 'Planets' }, prompt: { es: 'Toca un planeta', en: 'Tap a planet' }, icon: '🪐', color: 'navy' },
 } as const
 
 const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'wye', 'zee']
@@ -81,25 +85,14 @@ const englishNames: Record<GameId, Record<string, string>> = {
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
   food: Object.fromEntries(['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato'].map((name, index) => [foods[index][0], name])),
   emotions: Object.fromEntries(['happy', 'sad', 'angry', 'scared', 'surprised', 'sleepy', 'love', 'shy', 'laughing', 'calm'].map((name, index) => [emotions[index][0], name])),
-  mix: {},
+  planets: Object.fromEntries(['sun', 'earth', 'moon', 'mars', 'saturn', 'jupiter', 'neptune', 'venus', 'mercury', 'comet'].map((name, index) => [planets[index][0], name])),
 }
-
-const MIX_PAIRS = 10
 
 const audioFile = (locale: Locale, game: GameId, position: number) =>
   `${import.meta.env.BASE_URL}audio/${locale}/${game}/${position}.wav`
 
 const spokenFor = (item: LearningItem, locale: Locale) =>
   locale === 'en' ? englishNames[item.game][item.symbol] ?? item.spoken_text : item.spoken_text
-
-function mixedItems(items: LearningItem[], locale: Locale) {
-  const seen = new Set<string>()
-  return shuffle(items.filter((item) => item.game !== 'vowels' && item.game !== 'mix' && !(locale === 'en' && item.symbol === 'Ñ'))).filter((item) => {
-    if (seen.has(item.symbol)) return false
-    seen.add(item.symbol)
-    return true
-  })
-}
 
 function shuffle<T>(items: T[]) {
   const result = [...items]
@@ -120,7 +113,7 @@ function useLearningItems() {
       .then(({ data, error }) => {
         if (!active || error || !data?.length) return
         const valid = data.filter((item): item is LearningItem =>
-          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food', 'emotions'].includes(item.game))
+          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food', 'emotions', 'planets'].includes(item.game))
         if (valid.length) {
           const remoteGames = new Set(valid.map((item) => item.game))
           setItems([...valid, ...fallbackItems.filter((item) => !remoteGames.has(item.game))])
@@ -256,16 +249,15 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
   )
 }
 
-function MemoryGame({ items, game, locale, speak, pairCount = 5 }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void; pairCount?: number }) {
+function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
   const [round, setRound] = useState(0)
-  const memoryItems = useMemo(() => shuffle(items).slice(0, pairCount), [items, round, pairCount])
+  const memoryItems = useMemo(() => shuffle(items).slice(0, 5), [items, round])
   const deck = useMemo(() => shuffle(memoryItems.flatMap((item) => [
     { ...item, cardId: `${item.id}-a` }, { ...item, cardId: `${item.id}-b` },
   ])), [memoryItems])
   const [openCards, setOpenCards] = useState<string[]>([])
   const [matched, setMatched] = useState<number[]>([])
   const [locked, setLocked] = useState(false)
-  const mixed = game === 'mix'
 
   useEffect(() => { setOpenCards([]); setMatched([]); setLocked(false) }, [game, round])
 
@@ -291,8 +283,8 @@ function MemoryGame({ items, game, locale, speak, pairCount = 5 }: { items: Lear
 
   const won = memoryItems.length > 0 && matched.length === memoryItems.length
   return (
-    <section className={`memory-wrap ${mixed ? 'is-mixed' : ''}`} aria-label={`${locale === 'es' ? 'Memorice de' : 'Memory game with'} ${gameMeta[game].title[locale]}`}>
-      <div className={`memory-grid ${mixed ? 'is-mixed' : ''}`}>
+    <section className="memory-wrap" aria-label={`${locale === 'es' ? 'Memorice de' : 'Memory game with'} ${gameMeta[game].title[locale]}`}>
+      <div className="memory-grid">
         {deck.map((card) => {
           const visible = openCards.includes(card.cardId) || matched.includes(card.id)
           return (
@@ -312,30 +304,25 @@ function MemoryGame({ items, game, locale, speak, pairCount = 5 }: { items: Lear
 }
 
 function Game({ game, items, locale, onBack }: { game: GameId; items: LearningItem[]; locale: Locale; onBack: () => void }) {
-  const mixed = game === 'mix'
-  const [mode, setMode] = useState<Mode>(mixed ? 'memory' : 'explore')
+  const [mode, setMode] = useState<Mode>('explore')
   const { speak, speaking } = useSpeech(locale)
   const meta = gameMeta[game]
   const gameItems = useMemo(
-    () => mixed
-      ? mixedItems(items, locale)
-      : items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ')),
-    [game, items, locale, mixed],
+    () => items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ')),
+    [game, items, locale],
   )
   return (
     <main className={`play-shell theme-${meta.color}`}>
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
-        <div><small>{mixed || mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
+        <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
         <span className="header-slot" aria-hidden="true" />
       </header>
-      {mixed ? null : (
-        <nav className="mode-switch" aria-label="Modo de juego">
-          <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
-          <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
-        </nav>
-      )}
-      {mode === 'explore' && !mixed ? (
+      <nav className="mode-switch" aria-label="Modo de juego">
+        <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
+        <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
+      </nav>
+      {mode === 'explore' ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
@@ -344,7 +331,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
             </button>
           ))}
         </section>
-      ) : <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} pairCount={mixed ? MIX_PAIRS : 5} />}
+      ) : <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} />}
     </main>
   )
 }
@@ -359,8 +346,7 @@ export default function App() {
   const goBack = () => ['vowels', 'alphabet', 'animals', 'vehicles', 'food', 'emotions'].includes(game ?? '') ? setGame(null) : goHome()
   const selectCategory = (next: CategoryId) => {
     setCategory(next)
-    if (next === 'numbers') setGame('numbers')
-    if (next === 'mix') setGame('mix')
+    if (next === 'numbers' || next === 'planets') setGame(next)
   }
   const changeLocale = (next: Locale) => { localStorage.setItem('benjamin-language', next); setLocale(next) }
 
