@@ -105,6 +105,25 @@ const titleName = (item: LearningItem, locale: Locale) => {
 const promptLabel = (item: LearningItem, locale: Locale) =>
   item.game === 'vowels' || item.game === 'alphabet' ? shownSymbol(item) : titleName(item, locale)
 
+const feminineNames = new Set([
+  'vaca', 'oveja', 'rana', 'bicicleta', 'moto',
+  'manzana', 'frutilla', 'naranja', 'uva', 'sandía', 'zanahoria', 'papa',
+  'tierra', 'luna', 'risa',
+])
+
+const spanishArticle = (item: LearningItem) => {
+  if (item.game === 'vowels' || item.game === 'alphabet') return 'la'
+  return feminineNames.has(item.spoken_text) ? 'la' : 'el'
+}
+
+const findAskLine = (item: LearningItem, locale: Locale) => {
+  if (locale === 'es') return `¿Dónde está ${spanishArticle(item)}`
+  return item.game === 'vowels' || item.game === 'alphabet' ? 'Where is' : 'Where is the'
+}
+
+const findQuestion = (item: LearningItem, locale: Locale) =>
+  `${findAskLine(item, locale)} ${promptLabel(item, locale)}?`
+
 function ItemArt({ item }: { item: LearningItem }) {
   if (item.game === 'planets') {
     return <img className={`item-art planet-${item.symbol}`} src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
@@ -148,7 +167,7 @@ function useSpeech(locale: Locale) {
   const clearTimer = useRef<number | undefined>(undefined)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const speak = useCallback((text: string, symbol: string, audioPath: string) => {
+  const speak = useCallback((text: string, symbol: string, audioPath?: string) => {
     window.clearTimeout(clearTimer.current)
     audioRef.current?.pause()
     audioRef.current = null
@@ -174,10 +193,15 @@ function useSpeech(locale: Locale) {
         utterance.onend = finish
         utterance.onerror = finish
         window.speechSynthesis.speak(utterance)
-        clearTimer.current = window.setTimeout(finish, 2200)
+        clearTimer.current = window.setTimeout(finish, Math.min(8000, 1800 + text.length * 70))
       } catch {
         finish()
       }
+    }
+
+    if (!audioPath) {
+      playSystemVoice()
+      return
     }
 
     try {
@@ -267,7 +291,7 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
   )
 }
 
-function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
+function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath?: string) => void }) {
   const [round, setRound] = useState(0)
   const memoryItems = useMemo(() => shuffle(items).slice(0, 5), [items, round])
   const deck = useMemo(() => shuffle(memoryItems.flatMap((item) => [
@@ -321,7 +345,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
   )
 }
 
-function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
+function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath?: string) => void }) {
   const [round, setRound] = useState(0)
   const { target, choices } = useMemo(() => {
     const pool = shuffle(items)
@@ -335,7 +359,7 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
 
   const ask = useCallback(() => {
     if (!target) return
-    speak(spokenFor(target, locale), target.symbol, audioFile(locale, target.game, target.position))
+    speak(findQuestion(target, locale), target.symbol)
   }, [target, locale, speak])
 
   useEffect(() => {
@@ -344,6 +368,12 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
     const timer = window.setTimeout(ask, 280)
     return () => window.clearTimeout(timer)
   }, [round, ask])
+
+  useEffect(() => {
+    if (!found) return
+    const timer = window.setTimeout(() => setRound((value) => value + 1), 2000)
+    return () => window.clearTimeout(timer)
+  }, [found, round])
 
   const choose = (item: LearningItem) => {
     if (!target || found) return
@@ -360,8 +390,8 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
   if (!target) return null
   return (
     <section className="find-wrap" aria-label={locale === 'es' ? 'Encuentra' : 'Find it'}>
-      <button className="find-prompt" type="button" onClick={ask} aria-label={`${locale === 'es' ? 'Escuchar' : 'Listen'} ${promptLabel(target, locale)}`}>
-        <small>{locale === 'es' ? '¿Dónde está?' : 'Where is it?'}</small>
+      <button className="find-prompt" type="button" onClick={ask} aria-label={findQuestion(target, locale)}>
+        <small>{findAskLine(target, locale)}</small>
         <strong>{promptLabel(target, locale)}</strong>
       </button>
       <div className="find-choices">
@@ -375,31 +405,24 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
           </button>
         ))}
       </div>
-      <div className="find-actions">
-        {found ? (
-          <button className="find-next" type="button" onClick={() => setRound((value) => value + 1)}>
-            {locale === 'es' ? 'Siguiente' : 'Next'} →
-          </button>
-        ) : null}
-      </div>
     </section>
   )
 }
 
 const solarOrbits = [
-  { symbol: 'mercurio', orbit: '22%', size: '5%', duration: '16s', start: '-4s' },
-  { symbol: 'venus', orbit: '30%', size: '6.2%', duration: '22s', start: '-11s' },
-  { symbol: 'tierra', orbit: '38%', size: '6.8%', duration: '30s', start: '-18s', moon: true },
-  { symbol: 'marte', orbit: '46%', size: '5.6%', duration: '38s', start: '-7s' },
-  { symbol: 'asteroide', orbit: '54%', size: '4.6%', duration: '46s', start: '-21s' },
-  { symbol: 'jupiter', orbit: '64%', size: '9.5%', duration: '56s', start: '-13s' },
-  { symbol: 'saturno', orbit: '75%', size: '11%', duration: '68s', start: '-29s' },
-  { symbol: 'urano', orbit: '84%', size: '7.4%', duration: '82s', start: '-9s' },
-  { symbol: 'neptuno', orbit: '91%', size: '7.2%', duration: '96s', start: '-40s' },
-  { symbol: 'pluton', orbit: '97%', size: '3.8%', duration: '114s', start: '-55s' },
+  { symbol: 'mercurio', orbit: '26%', size: 'clamp(2.8rem, 8cqmin, 4.8rem)', duration: '16s', start: '-4s' },
+  { symbol: 'venus', orbit: '36%', size: 'clamp(3.2rem, 9.2cqmin, 5.2rem)', duration: '22s', start: '-11s' },
+  { symbol: 'tierra', orbit: '46%', size: 'clamp(3.4rem, 9.8cqmin, 5.5rem)', duration: '30s', start: '-18s', moon: true },
+  { symbol: 'marte', orbit: '55%', size: 'clamp(3.1rem, 8.8cqmin, 5rem)', duration: '38s', start: '-7s' },
+  { symbol: 'asteroide', orbit: '63%', size: 'clamp(2.9rem, 8.2cqmin, 4.8rem)', duration: '46s', start: '-21s' },
+  { symbol: 'jupiter', orbit: '72%', size: 'clamp(4.6rem, 13.5cqmin, 7.4rem)', duration: '56s', start: '-13s' },
+  { symbol: 'saturno', orbit: '81%', size: 'clamp(5rem, 15cqmin, 8rem)', duration: '68s', start: '-29s' },
+  { symbol: 'urano', orbit: '88%', size: 'clamp(3.7rem, 11cqmin, 6rem)', duration: '82s', start: '-9s' },
+  { symbol: 'neptuno', orbit: '93%', size: 'clamp(3.6rem, 10.6cqmin, 5.8rem)', duration: '96s', start: '-40s' },
+  { symbol: 'pluton', orbit: '97%', size: 'clamp(2.7rem, 7.4cqmin, 4.4rem)', duration: '114s', start: '-55s' },
 ] as const
 
-function SpaceGame({ items, locale, speak, speaking }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void; speaking: string | null }) {
+function SpaceGame({ items, locale, speak, speaking }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath?: string) => void; speaking: string | null }) {
   const bySymbol = useMemo(() => Object.fromEntries(items.map((item) => [item.symbol, item])), [items])
   const sun = bySymbol.sol
   const play = (item?: LearningItem) => {
