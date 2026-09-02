@@ -518,11 +518,13 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
       {mode === 'explore' ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
-            <button className={`learning-card ${item.game === 'planets' ? 'has-art' : ''} ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
-              type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
-              <span className="card-art"><ItemArt item={item} /></span>
-              {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
-            </button>
+            <div className="learn-slot" key={item.id}>
+              <button className={`learning-card ${item.game === 'planets' ? 'has-art' : ''} ${speaking === item.symbol ? 'is-speaking' : ''}`}
+                type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
+                <span className="card-art"><ItemArt item={item} /></span>
+                {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
+              </button>
+            </div>
           ))}
         </section>
       ) : mode === 'find' ? (
