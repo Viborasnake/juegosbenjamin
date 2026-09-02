@@ -8,6 +8,7 @@
   "rewrites": [
     { "source": "/juegos/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/juegos/audio/:path*", "destination": "/audio/:path*" },
+    { "source": "/juegos/planets/:path*", "destination": "/planets/:path*" },
     { "source": "/juegos", "destination": "/index.html" },
     { "source": "/juegos/", "destination": "/index.html" },
     { "source": "/juegos/:path*", "destination": "/index.html" }
