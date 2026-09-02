@@ -104,7 +104,7 @@ const titleName = (item: LearningItem, locale: Locale) => {
 
 function ItemArt({ item }: { item: LearningItem }) {
   if (item.game === 'planets') {
-    return <img className="item-art" src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
+    return <img className={`item-art planet-${item.symbol}`} src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
   }
   return shownSymbol(item)
 }

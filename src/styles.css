@@ -79,9 +79,21 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-card { min-height: 0; height: 100%; display: grid; place-items: center; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
 .learning-card span { display: grid; place-items: center; height: 100%; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6.5vh, 4.2rem); font-weight: 800; line-height: 1; }
 .learning-card.has-art { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .35rem .45rem .4rem; gap: .15rem; }
-.learning-card.has-art .card-art { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; overflow: hidden; }
-.learning-card.has-art .card-art .item-art { max-height: 100%; max-width: 100%; width: auto; height: 100%; object-fit: contain; object-position: center; }
-.card-name { flex-shrink: 0; color: #fff; font-family: 'Baloo 2', sans-serif; font-size: clamp(.85rem, 2.3vh, 1.3rem); font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.learning-card.has-art span.card-art { flex: 1 1 0; min-height: 0; height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; container-type: size; }
+.learning-card.has-art .card-art .item-art { height: calc(100cqh * var(--planet-scale, .86)); width: auto; max-width: 100cqw; object-fit: contain; object-position: center; }
+.item-art.planet-sol { --planet-scale: .98; }
+.item-art.planet-jupiter { --planet-scale: .94; }
+.item-art.planet-saturno { --planet-scale: .96; }
+.item-art.planet-tierra { --planet-scale: .82; }
+.item-art.planet-venus { --planet-scale: .80; }
+.item-art.planet-urano { --planet-scale: .80; }
+.item-art.planet-neptuno { --planet-scale: .78; }
+.item-art.planet-luna { --planet-scale: .74; }
+.item-art.planet-marte { --planet-scale: .70; }
+.item-art.planet-asteroide { --planet-scale: .68; translate: 10% 5%; }
+.item-art.planet-mercurio { --planet-scale: .58; }
+.item-art.planet-pluton { --planet-scale: .52; translate: -7% 7%; }
+.card-name { flex-shrink: 0; position: relative; z-index: 1; color: #fff; font-family: 'Baloo 2', sans-serif; font-size: clamp(.85rem, 2.3vh, 1.3rem); font-weight: 800; line-height: 1; letter-spacing: -.02em; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
 
 .memory-wrap { width: 100%; max-width: 980px; margin: 0 auto; flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
@@ -90,7 +102,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .memory-card .card-back, .memory-card .card-front { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; }
 .memory-card .card-back { font-size: clamp(1.1rem, 4.2vh, 2.4rem); opacity: .8; }
 .memory-card .card-front { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6vh, 3.6rem); font-weight: 800; gap: .15rem; padding: .3rem; }
-.memory-card .card-front .item-art { max-height: 72%; max-width: 90%; }
+.memory-card .card-front .item-art { max-height: calc(72% * var(--planet-scale, 1)); max-width: 90%; }
 .memory-card .card-name { font-size: clamp(.7rem, 1.8vh, 1rem); }
 .memory-card.is-open { transform: rotateY(180deg); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 25%, transparent); }
 .theme-navy .memory-card.is-open, .theme-navy .memory-card.is-matched { background: #14183a; }
