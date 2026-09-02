@@ -3,7 +3,7 @@ import { supabase } from './lib/supabase'
 
 type CategoryId = 'letters' | 'numbers' | 'world' | 'planets'
 type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'planets'
-type Mode = 'explore' | 'memory'
+type Mode = 'explore' | 'memory' | 'find'
 type Locale = 'es' | 'en'
 
 type LearningItem = {
@@ -318,6 +318,71 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
   )
 }
 
+function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
+  const [round, setRound] = useState(0)
+  const { target, choices } = useMemo(() => {
+    const pool = shuffle(items)
+    const nextTarget = pool[0]
+    const nextChoices = shuffle([nextTarget, ...pool.slice(1, 3)].filter(Boolean))
+    return { target: nextTarget, choices: nextChoices }
+  }, [items, round])
+  const [picked, setPicked] = useState<number | null>(null)
+  const [wrong, setWrong] = useState<number | null>(null)
+  const found = Boolean(target && picked === target.id)
+
+  const ask = useCallback(() => {
+    if (!target) return
+    speak(spokenFor(target, locale), target.symbol, audioFile(locale, target.game, target.position))
+  }, [target, locale, speak])
+
+  useEffect(() => {
+    setPicked(null)
+    setWrong(null)
+    const timer = window.setTimeout(ask, 280)
+    return () => window.clearTimeout(timer)
+  }, [round, ask])
+
+  const choose = (item: LearningItem) => {
+    if (!target || found) return
+    if (item.id === target.id) {
+      setPicked(item.id)
+      setWrong(null)
+      speak(spokenFor(item, locale), item.symbol, audioFile(locale, item.game, item.position))
+      return
+    }
+    setWrong(item.id)
+    window.setTimeout(() => setWrong(null), 420)
+  }
+
+  if (!target) return null
+  return (
+    <section className="find-wrap" aria-label={locale === 'es' ? 'Encuentra' : 'Find it'}>
+      <button className="find-prompt" type="button" onClick={ask} aria-label={`${locale === 'es' ? 'Escuchar' : 'Listen'} ${titleName(target, locale)}`}>
+        <small>{locale === 'es' ? '¿Dónde está?' : 'Where is it?'}</small>
+        <strong>{titleName(target, locale)}</strong>
+      </button>
+      <div className="find-choices">
+        {choices.map((item) => (
+          <button
+            className={`learning-card find-card ${item.game === 'planets' ? 'has-art' : ''} ${item.id === picked ? 'is-correct' : ''} ${item.id === wrong ? 'is-wrong' : ''}`}
+            key={item.id} type="button" onClick={() => choose(item)}
+            aria-label={titleName(item, locale)} aria-pressed={item.id === picked}>
+            <span className="card-art"><ItemArt item={item} /></span>
+            {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
+          </button>
+        ))}
+      </div>
+      <div className="find-actions">
+        {found ? (
+          <button className="find-next" type="button" onClick={() => setRound((value) => value + 1)}>
+            {locale === 'es' ? 'Siguiente' : 'Next'} →
+          </button>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
 function Game({ game, items, locale, onBack }: { game: GameId; items: LearningItem[]; locale: Locale; onBack: () => void }) {
   const [mode, setMode] = useState<Mode>('explore')
   const { speak, speaking } = useSpeech(locale)
@@ -330,12 +395,13 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
     <main className={`play-shell theme-${meta.color}`}>
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
-        <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
+        <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : mode === 'find' ? (locale === 'es' ? '¿Dónde está?' : 'Where is it?') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
         <span className="header-slot" aria-hidden="true" />
       </header>
       <nav className="mode-switch" aria-label="Modo de juego">
         <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
         <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
+        <button className={mode === 'find' ? 'active' : ''} type="button" onClick={() => setMode('find')}>🔎 {locale === 'es' ? 'Encuentra' : 'Find'}</button>
       </nav>
       {mode === 'explore' ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
@@ -347,7 +413,11 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
             </button>
           ))}
         </section>
-      ) : <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} />}
+      ) : mode === 'find' ? (
+        <FindGame items={gameItems} locale={locale} speak={speak} />
+      ) : (
+        <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} />
+      )}
     </main>
   )
 }
