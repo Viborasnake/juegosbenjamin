@@ -507,7 +507,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
   return (
     <main className={`play-shell theme-${meta.color} ${mode === 'space' ? 'is-space' : ''}`}>
       <header className="play-header">
-        <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
+        <button className="back-button" type="button" onClick={() => mode === 'space' ? setMode('explore') : onBack()} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
         <div><small>{mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : mode === 'find' ? (locale === 'es' ? '¿Dónde está?' : 'Where is it?') : mode === 'space' ? (locale === 'es' ? 'Toca un planeta' : 'Tap a planet') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
         <span className="header-slot" aria-hidden="true" />
       </header>
