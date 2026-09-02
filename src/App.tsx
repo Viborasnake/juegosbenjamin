@@ -256,12 +256,14 @@ function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; 
           const category = categoryMeta[categoryId]
           const title = category.title[locale]
           return (
-            <button className={`game-card ${category.color} ${categoryId}`} key={categoryId} type="button"
-              onClick={() => onSelect(categoryId)} aria-label={`${locale === 'es' ? 'Jugar con' : 'Play with'} ${title}`}>
-              <span className="game-icon" aria-hidden="true">{category.icon}</span>
-              <span className="game-copy"><small>{category.eyebrow}</small><strong>{title}</strong>
-                <span className="play-label">{locale === 'es' ? 'Jugar' : 'Play'} <b aria-hidden="true">→</b></span></span>
-            </button>
+            <div className="choice-slot" key={categoryId}>
+              <button className={`game-card ${category.color} ${categoryId}`} type="button"
+                onClick={() => onSelect(categoryId)} aria-label={`${locale === 'es' ? 'Jugar con' : 'Play with'} ${title}`}>
+                <span className="game-icon" aria-hidden="true">{category.icon}</span>
+                <span className="game-copy"><small>{category.eyebrow}</small><strong>{title}</strong>
+                  <span className="play-label">{locale === 'es' ? 'Jugar' : 'Play'} <b aria-hidden="true">→</b></span></span>
+              </button>
+            </div>
           )
         })}
       </section>
@@ -293,10 +295,12 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
       </header>
       <section className={`subgame-grid ${category}`}>
         {subgames[category].map((option) => (
-          <button className={`subgame-card ${option.choiceClass}`} key={option.id} type="button" onClick={() => onSelect(option.id)}>
-            <span aria-hidden="true">{option.icon}</span><small>{option.hint}</small>
-            <strong>{gameMeta[option.id].title[locale]}</strong><b>{locale === 'es' ? 'Jugar' : 'Play'} →</b>
-          </button>
+          <div className="choice-slot" key={option.id}>
+            <button className={`subgame-card ${option.choiceClass}`} type="button" onClick={() => onSelect(option.id)}>
+              <span aria-hidden="true">{option.icon}</span><small>{option.hint}</small>
+              <strong>{gameMeta[option.id].title[locale]}</strong><b>{locale === 'es' ? 'Jugar' : 'Play'} →</b>
+            </button>
+          </div>
         ))}
       </section>
     </main>

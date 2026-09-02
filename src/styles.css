@@ -16,8 +16,9 @@ button { font: inherit; }
 .brand h1, .play-header h1 { margin: 0; font-family: 'Baloo 2', sans-serif; letter-spacing: -.04em; }
 .brand h1 { font-size: clamp(2.1rem, 6.5vh, 4rem); line-height: .95; }
 
-.game-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.7rem, 1.8vh, 1.3rem); }
-.game-card { position: relative; min-height: 0; height: 100%; padding: clamp(1rem, 2.4vh, 1.8rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .55rem 0 rgba(74, 51, 54, .12), 0 1rem 2rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
+.game-grid { --cols: 2; --rows: 2; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.7rem, 1.8vh, 1.3rem); container-type: size; }
+.choice-slot { min-width: 0; width: min(20rem, calc((100cqh - (var(--rows) - 1) * 1rem) / var(--rows) * 3 / 4)); aspect-ratio: 3 / 4; justify-self: center; }
+.game-card { position: relative; min-height: 0; width: 100%; height: 100%; padding: clamp(1rem, 2.4vh, 1.8rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .55rem 0 rgba(74, 51, 54, .12), 0 1rem 2rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
 .game-card::after { content: ''; position: absolute; width: 10rem; height: 10rem; border-radius: 50%; background: rgba(255,255,255,.13); right: -2.5rem; top: -3rem; }
 .game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active { transform: translateY(.35rem) scale(.985); }
 button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
@@ -51,9 +52,9 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .back-button { width: 3.4rem; height: 3.4rem; border: 0; border-radius: 1.1rem; background: white; color: #443847; font-size: 1.7rem; font-weight: 800; box-shadow: 0 .28rem 0 rgba(73,55,67,.12); cursor: pointer; }
 .header-slot { display: block; min-height: 1px; }
 
-.subgame-grid { width: 100%; max-width: 980px; margin: .6rem auto 0; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.7rem, 2vh, 1.3rem); }
-.subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.subgame-card { min-height: 0; padding: 1.3rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 1.7rem; color: white; text-align: left; box-shadow: 0 .5rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
+.subgame-grid { --cols: 2; --rows: 1; width: 100%; max-width: 980px; margin: .6rem auto 0; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.7rem, 2vh, 1.3rem); container-type: size; }
+.subgame-grid.world { --rows: 2; }
+.subgame-card { min-height: 0; width: 100%; height: 100%; padding: 1.3rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 1.7rem; color: white; text-align: left; box-shadow: 0 .5rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
 .subgame-card > span { margin-bottom: auto; font-size: clamp(2.6rem, 8vh, 4.4rem); }
 .subgame-card small { font-size: .9rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
 .subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.5vw, 2.8rem); line-height: .95; }
@@ -154,7 +155,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .win-card { transform: translateX(-50%); }
 
 @media (max-width: 700px) {
-  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: repeat(2, max-content); }
   .play-header { grid-template-columns: 3.2rem 1fr 6.4rem; gap: .3rem; }
   .back-button { width: 3.1rem; height: 3.1rem; font-size: 1.5rem; }
   .memory-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
