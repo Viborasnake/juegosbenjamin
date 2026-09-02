@@ -342,12 +342,14 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
         {deck.map((card) => {
           const visible = openCards.includes(card.cardId) || matched.includes(card.id)
           return (
-            <button className={`memory-card ${visible ? 'is-open' : ''} ${matched.includes(card.id) ? 'is-matched' : ''}`}
-              key={card.cardId} type="button" onClick={() => selectCard(card)}
-              aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
-              <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
-              <span className="card-front">{card.game === 'planets' ? <><ItemArt item={card} /><small className="card-name">{titleName(card, locale)}</small></> : <ItemArt item={card} />}</span>
-            </button>
+            <div className="memory-slot" key={card.cardId}>
+              <button className={`memory-card ${visible ? 'is-open' : ''} ${matched.includes(card.id) ? 'is-matched' : ''}`}
+                type="button" onClick={() => selectCard(card)}
+                aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
+                <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
+                <span className="card-front">{card.game === 'planets' ? <><ItemArt item={card} /><small className="card-name">{titleName(card, locale)}</small></> : <ItemArt item={card} />}</span>
+              </button>
+            </div>
           )
         })}
       </div>
@@ -408,13 +410,15 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
       </button>
       <div className="find-choices">
         {choices.map((item) => (
-          <button
-            className={`learning-card find-card ${item.game === 'planets' ? 'has-art' : ''} ${item.id === picked ? 'is-correct' : ''} ${item.id === wrong ? 'is-wrong' : ''}`}
-            key={item.id} type="button" onClick={() => choose(item)}
-            aria-label={titleName(item, locale)} aria-pressed={item.id === picked}>
-            <span className="card-art"><ItemArt item={item} /></span>
-            {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
-          </button>
+          <div className="find-slot" key={item.id}>
+            <button
+              className={`learning-card find-card ${item.game === 'planets' ? 'has-art' : ''} ${item.id === picked ? 'is-correct' : ''} ${item.id === wrong ? 'is-wrong' : ''}`}
+              type="button" onClick={() => choose(item)}
+              aria-label={titleName(item, locale)} aria-pressed={item.id === picked}>
+              <span className="card-art"><ItemArt item={item} /></span>
+              {item.game === 'planets' ? <small className="card-name">{titleName(item, locale)}</small> : null}
+            </button>
+          </div>
         ))}
       </div>
     </section>

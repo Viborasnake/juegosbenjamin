@@ -97,8 +97,10 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
 
 .memory-wrap { width: 100%; max-width: 980px; margin: 0 auto; flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
-.memory-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: clamp(.35rem, 1.1vh, .8rem); perspective: 1000px; }
-.memory-card { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; border: 0; border-radius: clamp(.7rem, 1.5vh, 1.3rem); background: var(--accent); color: white; box-shadow: 0 .28rem 0 var(--accent-deep); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
+.memory-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, auto); align-content: center; gap: clamp(.45rem, 1.4vh, 1rem); perspective: 1000px; container-type: size; }
+.memory-slot { min-width: 0; width: min(100%, calc((100cqh - 1.2rem) * 3 / 8)); aspect-ratio: 3 / 4; justify-self: center; }
+.find-slot { min-width: 0; min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; container-type: size; }
+.memory-card { position: relative; width: 100%; height: 100%; aspect-ratio: 3 / 4; border: 0; border-radius: clamp(.85rem, 1.8vh, 1.35rem); background: var(--accent); color: white; box-shadow: 0 .32rem 0 var(--accent-deep), 0 .55rem 1.1rem rgba(70,54,66,.16); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
 .memory-card .card-back, .memory-card .card-front { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; }
 .memory-card .card-back { font-size: clamp(1.1rem, 4.2vh, 2.4rem); opacity: .8; }
 .memory-card .card-front { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6vh, 3.6rem); font-weight: 800; gap: .15rem; padding: .3rem; }
@@ -117,7 +119,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .find-prompt small { display: block; font-weight: 800; opacity: .7; font-size: clamp(.8rem, 1.8vh, 1rem); }
 .find-prompt strong { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.6rem, 4.5vh, 2.6rem); line-height: 1; }
 .find-choices { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.6rem, 1.6vh, 1.1rem); }
-.find-card { height: 100%; }
+.find-card { width: min(100cqw, calc(100cqh * 3 / 4)); height: min(100cqh, calc(100cqw * 4 / 3)); max-width: 100%; max-height: 100%; aspect-ratio: 3 / 4; }
 .find-card.is-correct { background: #c8ec9a; color: #3d6b1f; box-shadow: 0 .28rem 0 #8fbe5c; }
 .find-card.is-wrong { animation: no-no .38s ease; }
 .theme-navy .find-card { background: #14183a; }
