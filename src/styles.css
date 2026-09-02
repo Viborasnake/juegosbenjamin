@@ -126,16 +126,18 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .play-shell.is-space { background: #07091a; }
 .space-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; container-type: size; background: radial-gradient(circle at 50% 42%, #1b2458 0 18%, #0b1028 58%, #050714 100%); }
 .space-star { position: absolute; border-radius: 50%; background: rgba(255,255,255,.7); animation: twinkle 3.6s ease-in-out infinite; pointer-events: none; }
+.space-system, .space-orbit, .space-body-wrap, .space-moon-path { pointer-events: none; }
 .space-system { position: absolute; left: 50%; top: 50%; width: min(100cqw, 100cqh); height: min(100cqw, 100cqh); translate: -50% -50%; }
 .space-orbit { position: absolute; left: 50%; top: 50%; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; translate: -50% -50%; animation: space-spin linear infinite; }
-.space-body, .space-sun, .space-moon { padding: 0; border: 0; background: transparent; cursor: pointer; touch-action: manipulation; }
-.space-body { position: absolute; top: 0; left: 50%; z-index: 2; translate: -50% -50%; animation: space-spin-back linear infinite; }
-.space-body::after, .space-sun::after, .space-moon::after { content: ''; position: absolute; inset: -30%; }
+.space-body, .space-sun, .space-moon { padding: 0; border: 0; background: transparent; cursor: pointer; touch-action: manipulation; pointer-events: auto; }
+.space-body-wrap { position: absolute; top: 0; left: 50%; translate: -50% -50%; animation: space-spin-back linear infinite; }
+.space-body { position: absolute; inset: 0; width: 100%; height: 100%; }
 .space-body img, .space-sun img, .space-moon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .space-sun { position: absolute; left: 50%; top: 50%; width: clamp(5.4rem, 20cqmin, 9.6rem); height: clamp(5.4rem, 20cqmin, 9.6rem); translate: -50% -50%; z-index: 4; animation: sun-soft 7s ease-in-out infinite; }
-.space-moon-path { position: absolute; inset: -62%; animation: space-spin 9s linear infinite; pointer-events: none; }
-.space-moon { position: absolute; top: 0; left: 50%; width: 48%; height: 48%; min-width: 1.8rem; min-height: 1.8rem; translate: -50% -50%; pointer-events: auto; animation: space-spin-back 9s linear infinite; z-index: 5; }
-.space-body.is-speaking, .space-sun.is-speaking, .space-moon.is-speaking { filter: brightness(1.18); scale: 1.1; z-index: 6; }
+.space-moon-path { position: absolute; inset: -78%; animation: space-spin 9s linear infinite; }
+.space-moon { position: absolute; top: 0; left: 50%; width: clamp(1.5rem, 4.4cqmin, 2.3rem); height: clamp(1.5rem, 4.4cqmin, 2.3rem); translate: -50% -50%; animation: space-spin-back 9s linear infinite; z-index: 5; }
+.space-moon::after { content: ''; position: absolute; inset: -50%; }
+.space-body.is-speaking, .space-sun.is-speaking, .space-moon.is-speaking { filter: brightness(1.18); scale: 1.1; }
 
 @keyframes space-spin { to { rotate: 360deg; } }
 @keyframes space-spin-back { to { rotate: -360deg; } }

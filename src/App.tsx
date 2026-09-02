@@ -454,19 +454,20 @@ function SpaceGame({ items, locale, speak, speaking }: { items: LearningItem[]; 
           const moon = 'moon' in orbit && orbit.moon ? bySymbol.luna : undefined
           return (
             <div className="space-orbit" key={orbit.symbol} style={{ width: orbit.orbit, height: orbit.orbit, animationDuration: orbit.duration, animationDelay: orbit.start }}>
-              <button className={`space-body ${speaking === item.symbol ? 'is-speaking' : ''}`} type="button"
-                style={{ width: orbit.size, height: orbit.size, animationDuration: orbit.duration, animationDelay: orbit.start }}
-                onClick={(event) => { event.stopPropagation(); play(item) }} aria-label={titleName(item, locale)}>
-                <img src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
+              <div className="space-body-wrap" style={{ width: orbit.size, height: orbit.size, animationDuration: orbit.duration, animationDelay: orbit.start }}>
+                <button className={`space-body ${speaking === item.symbol ? 'is-speaking' : ''}`} type="button"
+                  onClick={(event) => { event.stopPropagation(); play(item) }} aria-label={titleName(item, locale)}>
+                  <img src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
+                </button>
                 {moon ? (
-                  <span className="space-moon-path" aria-hidden="true">
+                  <span className="space-moon-path">
                     <button className={`space-moon ${speaking === moon.symbol ? 'is-speaking' : ''}`} type="button"
                       onClick={(event) => { event.stopPropagation(); play(moon) }} aria-label={titleName(moon, locale)}>
                       <img src={`${import.meta.env.BASE_URL}planets/luna.png`} alt="" draggable={false} />
                     </button>
                   </span>
                 ) : null}
-              </button>
+              </div>
             </div>
           )
         })}
