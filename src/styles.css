@@ -79,8 +79,8 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-card { min-height: 0; height: 100%; display: grid; place-items: center; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
 .learning-card span { display: grid; place-items: center; height: 100%; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6.5vh, 4.2rem); font-weight: 800; line-height: 1; }
 .learning-card.has-art { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .35rem .45rem .4rem; gap: .15rem; }
-.learning-card.has-art .card-art { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; }
-.learning-card.has-art .card-art .item-art { max-height: 100%; max-width: 92%; }
+.learning-card.has-art .card-art { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; overflow: hidden; }
+.learning-card.has-art .card-art .item-art { max-height: 100%; max-width: 100%; width: auto; height: 100%; object-fit: contain; object-position: center; }
 .card-name { flex-shrink: 0; color: #fff; font-family: 'Baloo 2', sans-serif; font-size: clamp(.85rem, 2.3vh, 1.3rem); font-weight: 800; line-height: 1; letter-spacing: -.02em; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
 
