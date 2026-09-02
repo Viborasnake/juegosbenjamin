@@ -107,18 +107,30 @@ const promptLabel = (item: LearningItem, locale: Locale) =>
 
 const feminineNames = new Set([
   'vaca', 'oveja', 'rana', 'bicicleta', 'moto',
-  'manzana', 'frutilla', 'naranja', 'uva', 'sandía', 'zanahoria', 'papa',
-  'tierra', 'luna', 'risa',
+  'manzana', 'frutilla', 'naranja', 'uva', 'sandía', 'zanahoria', 'papa', 'risa',
 ])
 
-const spanishArticle = (item: LearningItem) => {
-  if (item.game === 'vowels' || item.game === 'alphabet') return 'la'
-  return feminineNames.has(item.spoken_text) ? 'la' : 'el'
+const findArticle = (item: LearningItem, locale: Locale) => {
+  if (locale === 'es') {
+    if (item.game === 'vowels' || item.game === 'alphabet') return 'la'
+    if (item.game === 'numbers') return 'el'
+    if (item.game === 'emotions') return item.spoken_text === 'risa' ? 'la' : item.spoken_text === 'cariño' ? 'el' : null
+    if (item.game === 'planets') {
+      if (item.symbol === 'sol' || item.symbol === 'asteroide') return 'el'
+      if (item.symbol === 'luna' || item.symbol === 'tierra') return 'la'
+      return null
+    }
+    return feminineNames.has(item.spoken_text) ? 'la' : 'el'
+  }
+  if (item.game === 'vowels' || item.game === 'alphabet' || item.game === 'numbers' || item.game === 'emotions') return null
+  if (item.game === 'planets') return item.symbol === 'sol' || item.symbol === 'luna' || item.symbol === 'asteroide' ? 'the' : null
+  return 'the'
 }
 
 const findAskLine = (item: LearningItem, locale: Locale) => {
-  if (locale === 'es') return `¿Dónde está ${spanishArticle(item)}`
-  return item.game === 'vowels' || item.game === 'alphabet' ? 'Where is' : 'Where is the'
+  const article = findArticle(item, locale)
+  if (locale === 'es') return article ? `¿Dónde está ${article}` : '¿Dónde está'
+  return article ? `Where is ${article}` : 'Where is'
 }
 
 const findQuestion = (item: LearningItem, locale: Locale) =>
