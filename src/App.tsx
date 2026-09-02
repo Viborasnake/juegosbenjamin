@@ -28,7 +28,7 @@ const animals = [['🐶', 'perro'], ['🐱', 'gato'], ['🐮', 'vaca'], ['🐷',
 const vehicles = [['🚗', 'auto'], ['🚌', 'autobús'], ['🚂', 'tren'], ['🚲', 'bicicleta'], ['✈️', 'avión'], ['🚁', 'helicóptero'], ['🚢', 'barco'], ['🚜', 'tractor'], ['🚒', 'camión de bomberos'], ['🏍️', 'moto']]
 const foods = [['🍎', 'manzana'], ['🍌', 'plátano'], ['🍓', 'frutilla'], ['🍊', 'naranja'], ['🍇', 'uva'], ['🍉', 'sandía'], ['🥕', 'zanahoria'], ['🍅', 'tomate'], ['🌽', 'choclo'], ['🥔', 'papa']]
 const emotions = [['😄', 'feliz'], ['😢', 'triste'], ['😠', 'enojado'], ['😨', 'asustado'], ['😲', 'sorprendido'], ['😴', 'cansado'], ['🥰', 'cariño'], ['😳', 'tímido'], ['😂', 'risa'], ['😌', 'tranquilo']]
-const planets = [['☀️', 'sol'], ['🌍', 'tierra'], ['🌙', 'luna'], ['🔴', 'marte'], ['🪐', 'saturno'], ['🟠', 'júpiter'], ['🔵', 'neptuno'], ['🟡', 'venus'], ['⚪', 'mercurio'], ['☄️', 'cometa']]
+const planets = [['sol', 'sol'], ['mercurio', 'mercurio'], ['venus', 'venus'], ['tierra', 'tierra'], ['marte', 'marte'], ['jupiter', 'júpiter'], ['saturno', 'saturno'], ['urano', 'urano'], ['neptuno', 'neptuno'], ['pluton', 'plutón'], ['luna', 'luna'], ['asteroide', 'asteroide']]
 
 const fallbackItems: LearningItem[] = [
   ...['A', 'E', 'I', 'O', 'U'].map((symbol, index) => ({
@@ -85,7 +85,7 @@ const englishNames: Record<GameId, Record<string, string>> = {
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
   food: Object.fromEntries(['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato'].map((name, index) => [foods[index][0], name])),
   emotions: Object.fromEntries(['happy', 'sad', 'angry', 'scared', 'surprised', 'sleepy', 'love', 'shy', 'laughing', 'calm'].map((name, index) => [emotions[index][0], name])),
-  planets: Object.fromEntries(['sun', 'earth', 'moon', 'mars', 'saturn', 'jupiter', 'neptune', 'venus', 'mercury', 'comet'].map((name, index) => [planets[index][0], name])),
+  planets: Object.fromEntries(['sun', 'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto', 'moon', 'asteroid'].map((name, index) => [planets[index][0], name])),
 }
 
 const audioFile = (locale: Locale, game: GameId, position: number) =>
@@ -96,6 +96,13 @@ const spokenFor = (item: LearningItem, locale: Locale) =>
 
 const shownSymbol = (item: LearningItem) =>
   item.game === 'vowels' || item.game === 'alphabet' ? item.symbol.toLocaleLowerCase('es') : item.symbol
+
+function ItemArt({ item }: { item: LearningItem }) {
+  if (item.game === 'planets') {
+    return <img className="item-art" src={`${import.meta.env.BASE_URL}planets/${item.symbol}.png`} alt="" draggable={false} />
+  }
+  return shownSymbol(item)
+}
 
 function shuffle<T>(items: T[]) {
   const result = [...items]
@@ -295,7 +302,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
               key={card.cardId} type="button" onClick={() => selectCard(card)}
               aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
               <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
-              <span className="card-front">{shownSymbol(card)}</span>
+              <span className="card-front"><ItemArt item={card} /></span>
             </button>
           )
         })}
@@ -330,7 +337,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
               type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
-              <span>{shownSymbol(item)}</span>
+              <span><ItemArt item={item} /></span>
             </button>
           ))}
         </section>

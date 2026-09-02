@@ -72,7 +72,10 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-grid { width: 100%; max-width: 1100px; margin: 0 auto; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: clamp(.4rem, 1.2vh, .9rem); }
 .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions, .learning-grid.planets { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.learning-grid.planets { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.learning-grid.planets .learning-card { background: #14183a; }
+.item-art { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
 .learning-card { min-height: 0; height: 100%; display: grid; place-items: center; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
 .learning-card span { display: grid; place-items: center; height: 100%; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6.5vh, 4.2rem); font-weight: 800; line-height: 1; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
@@ -84,6 +87,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .memory-card .card-back { font-size: clamp(1.1rem, 4.2vh, 2.4rem); opacity: .8; }
 .memory-card .card-front { transform: rotateY(180deg); font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6vh, 3.6rem); font-weight: 800; }
 .memory-card.is-open { transform: rotateY(180deg); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 25%, transparent); }
+.theme-navy .memory-card.is-open, .theme-navy .memory-card.is-matched { background: #14183a; }
 .memory-card.is-matched { background: #fff9c8; box-shadow: 0 .28rem 0 #e8d878; }
 .win-card { position: absolute; left: 50%; bottom: .4rem; z-index: 6; padding: .7rem 1rem; width: max-content; max-width: calc(100% - 1rem); display: flex; align-items: center; gap: .6rem; border-radius: 1.2rem; background: white; box-shadow: 0 .4rem 1.2rem rgba(80,60,70,.16); animation: pop-in .3s ease-out; }
 .win-card > span { font-size: 1.6rem; }
@@ -98,7 +102,8 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
   .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .play-header { grid-template-columns: 3.2rem 1fr 6.4rem; gap: .3rem; }
   .back-button { width: 3.1rem; height: 3.1rem; font-size: 1.5rem; }
-  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions, .learning-grid.planets { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .learning-grid.planets { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
   .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .memory-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }

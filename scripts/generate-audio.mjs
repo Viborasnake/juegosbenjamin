@@ -21,8 +21,8 @@ const foodEs = ['manzana', 'plátano', 'frutilla', 'naranja', 'uva', 'sandía', 
 const foodEn = ['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato']
 const emotionsEs = ['feliz', 'triste', 'enojado', 'asustado', 'sorprendido', 'cansado', 'cariño', 'tímido', 'risa', 'tranquilo']
 const emotionsEn = ['happy', 'sad', 'angry', 'scared', 'surprised', 'sleepy', 'love', 'shy', 'laughing', 'calm']
-const planetsEs = ['sol', 'tierra', 'luna', 'marte', 'saturno', 'júpiter', 'neptuno', 'venus', 'mercurio', 'cometa']
-const planetsEn = ['sun', 'earth', 'moon', 'mars', 'saturn', 'jupiter', 'neptune', 'venus', 'mercury', 'comet']
+const planetsEs = ['sol', 'mercurio', 'venus', 'tierra', 'marte', 'júpiter', 'saturno', 'urano', 'neptuno', 'plutón', 'luna', 'asteroide']
+const planetsEn = ['sun', 'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto', 'moon', 'asteroid']
 
 const collections = {
   es: {

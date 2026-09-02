@@ -50,8 +50,9 @@ values
   ('emotions', '😄', 'feliz', 1), ('emotions', '😢', 'triste', 2), ('emotions', '😠', 'enojado', 3),
   ('emotions', '😨', 'asustado', 4), ('emotions', '😲', 'sorprendido', 5), ('emotions', '😴', 'cansado', 6),
   ('emotions', '🥰', 'cariño', 7), ('emotions', '😳', 'tímido', 8), ('emotions', '😂', 'risa', 9), ('emotions', '😌', 'tranquilo', 10),
-  ('planets', '☀️', 'sol', 1), ('planets', '🌍', 'tierra', 2), ('planets', '🌙', 'luna', 3),
-  ('planets', '🔴', 'marte', 4), ('planets', '🪐', 'saturno', 5), ('planets', '🟠', 'júpiter', 6),
-  ('planets', '🔵', 'neptuno', 7), ('planets', '🟡', 'venus', 8), ('planets', '⚪', 'mercurio', 9), ('planets', '☄️', 'cometa', 10)
+  ('planets', 'sol', 'sol', 1), ('planets', 'mercurio', 'mercurio', 2), ('planets', 'venus', 'venus', 3),
+  ('planets', 'tierra', 'tierra', 4), ('planets', 'marte', 'marte', 5), ('planets', 'jupiter', 'júpiter', 6),
+  ('planets', 'saturno', 'saturno', 7), ('planets', 'urano', 'urano', 8), ('planets', 'neptuno', 'neptuno', 9),
+  ('planets', 'pluton', 'plutón', 10), ('planets', 'luna', 'luna', 11), ('planets', 'asteroide', 'asteroide', 12)
 on conflict (game, symbol) do update
 set spoken_text = excluded.spoken_text, position = excluded.position;
