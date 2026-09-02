@@ -71,7 +71,7 @@ const gameMeta = {
   mix: { title: { es: 'Memorice', en: 'Memory' }, prompt: { es: 'Encuentra las parejas', en: 'Find the pairs' }, icon: '🧠', color: 'purple' },
 } as const
 
-const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'y griega', 'zee']
+const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'wye', 'zee']
 
 const englishNames: Record<GameId, Record<string, string>> = {
   vowels: { A: 'ay', E: 'ee', I: 'eye', O: 'oh', U: 'you' },

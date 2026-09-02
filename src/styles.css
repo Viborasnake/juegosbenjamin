@@ -2,21 +2,22 @@
 
 :root { font-family: 'Nunito', system-ui, sans-serif; color: #392f3b; background: #fff8e8; font-synthesis: none; text-rendering: optimizeLegibility; }
 * { box-sizing: border-box; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
-html, body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; background: #fff8e8; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+html, body, #root { margin: 0; width: 100%; height: 100%; min-width: 320px; background: #fff8e8; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; overflow: hidden; }
+html, body { height: 100dvh; }
 button { font: inherit; }
 
-.home-shell { position: relative; width: min(100%, 1080px); min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: max(2rem, env(safe-area-inset-top)) clamp(1.25rem, 5vw, 4rem) max(2rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; justify-content: center; }
+.home-shell { position: relative; width: min(100%, 1080px); height: 100dvh; margin: 0 auto; padding: max(3.6rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) max(1rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; overflow: hidden; }
 .language-switch { position: fixed; z-index: 40; top: max(.85rem, env(safe-area-inset-top)); right: clamp(.75rem, 3vw, 2rem); padding: .3rem; display: flex; gap: .2rem; border-radius: 1rem; background: white; box-shadow: 0 .25rem .9rem rgba(70,50,60,.1); }
 .language-switch button { min-width: 3.1rem; min-height: 2.7rem; border: 0; border-radius: .75rem; background: transparent; color: #897783; font-weight: 800; cursor: pointer; }
 .language-switch button.active { background: #463c56; color: white; }
-.brand { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: clamp(2rem, 6vh, 4.5rem); }
-.brand-sun { font-size: clamp(3rem, 9vw, 5rem); filter: drop-shadow(0 .3rem 0 rgba(194, 138, 27, .18)); }
-.brand p { margin: 0 0 -.25rem; color: #7b657c; font-size: clamp(1rem, 3.3vw, 1.35rem); font-weight: 700; }
+.brand { display: flex; align-items: center; justify-content: center; gap: .8rem; margin-bottom: clamp(.6rem, 2vh, 1.4rem); flex-shrink: 0; }
+.brand-sun { font-size: clamp(2.4rem, 7vh, 4.2rem); filter: drop-shadow(0 .3rem 0 rgba(194, 138, 27, .18)); }
+.brand p { margin: 0 0 -.25rem; color: #7b657c; font-size: clamp(.9rem, 2.4vh, 1.2rem); font-weight: 700; }
 .brand h1, .play-header h1 { margin: 0; font-family: 'Baloo 2', sans-serif; letter-spacing: -.04em; }
-.brand h1 { font-size: clamp(3rem, 10vw, 6rem); line-height: .95; }
+.brand h1 { font-size: clamp(2.1rem, 6.5vh, 4rem); line-height: .95; }
 
-.game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 1.7rem); }
-.game-card { position: relative; min-height: clamp(14rem, 32vw, 20rem); padding: clamp(1.4rem, 4vw, 2.2rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2.25rem; color: white; text-align: left; box-shadow: 0 .75rem 0 rgba(74, 51, 54, .12), 0 1.2rem 2.6rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
+.game-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.7rem, 1.8vh, 1.3rem); }
+.game-card { position: relative; min-height: 0; height: 100%; padding: clamp(1rem, 2.4vh, 1.8rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .55rem 0 rgba(74, 51, 54, .12), 0 1rem 2rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
 .game-card::after { content: ''; position: absolute; width: 10rem; height: 10rem; border-radius: 50%; background: rgba(255,255,255,.13); right: -2.5rem; top: -3rem; }
 .game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active { transform: translateY(.35rem) scale(.985); }
 button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
@@ -31,28 +32,27 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .game-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
 .game-card.purple { background: linear-gradient(145deg, #a67be4, #7359c8); }
-.game-icon { position: relative; z-index: 1; display: block; font-size: clamp(4rem, 11vw, 6.8rem); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
-.game-card.numbers .game-icon { align-self: flex-end; font-size: clamp(3.6rem, 10vw, 6.1rem); }
-.game-copy { position: relative; z-index: 1; width: 100%; margin-top: 1.15rem; display: flex; flex-direction: column; }
-.game-copy small { font-size: clamp(.8rem, 2vw, 1rem); letter-spacing: .08em; font-weight: 800; opacity: .9; }
-.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2.2rem, 5.4vw, 3.6rem); line-height: .95; }
-.play-label { margin-top: .55rem; font-size: 1.05rem; font-weight: 800; }
-.play-label b { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; margin-left: .25rem; border-radius: 50%; background: rgba(255,255,255,.2); }
-.grownup-note { margin: 2rem 0 0; text-align: center; color: #8a7881; font-size: .95rem; font-weight: 700; }
+.game-icon { position: relative; z-index: 1; display: block; font-size: clamp(2.6rem, 9vh, 5.4rem); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
+.game-card.numbers .game-icon { align-self: flex-end; font-size: clamp(2.4rem, 8vh, 5rem); }
+.game-copy { position: relative; z-index: 1; width: 100%; margin-top: .6rem; display: flex; flex-direction: column; }
+.game-copy small { font-size: clamp(.75rem, 1.8vh, .95rem); letter-spacing: .08em; font-weight: 800; opacity: .9; }
+.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.4vh, 3rem); line-height: .95; }
+.play-label { margin-top: .35rem; font-size: clamp(.9rem, 2vh, 1.05rem); font-weight: 800; }
+.play-label b { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; margin-left: .25rem; border-radius: 50%; background: rgba(255,255,255,.2); }
+.grownup-note { margin: .7rem 0 0; text-align: center; color: #8a7881; font-size: .9rem; font-weight: 700; flex-shrink: 0; }
 
-.play-shell, .choice-shell { min-height: 100vh; min-height: 100dvh; padding: max(1rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) max(1.5rem, env(safe-area-inset-bottom)); background: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 18%, transparent) 0 11rem, transparent 11.1rem), var(--soft); }
-.choice-shell { display: flex; flex-direction: column; justify-content: center; }
-.play-header { width: min(100%, 980px); margin: 0 auto 1.2rem; display: grid; grid-template-columns: 4.25rem 1fr 7rem; align-items: center; gap: 1rem; }
+.play-shell, .choice-shell { height: 100dvh; max-height: 100dvh; overflow: hidden; padding: max(.7rem, env(safe-area-inset-top)) clamp(.8rem, 3vw, 2rem) max(.7rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; background: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 18%, transparent) 0 11rem, transparent 11.1rem), var(--soft); }
+.play-header { width: 100%; max-width: 1100px; margin: 0 auto .45rem; display: grid; grid-template-columns: 3.6rem 1fr 6.8rem; align-items: center; gap: .6rem; flex-shrink: 0; }
 .play-header > div { text-align: center; }
-.play-header small { color: var(--accent-deep); font-weight: 800; font-size: clamp(.9rem, 2.5vw, 1.2rem); }
-.play-header h1 { font-size: clamp(2.8rem, 8vw, 5rem); line-height: .9; }
-.back-button { width: 4.1rem; height: 4.1rem; border: 0; border-radius: 1.35rem; background: white; color: #443847; font-size: 2.1rem; font-weight: 800; box-shadow: 0 .35rem 0 rgba(73,55,67,.12); cursor: pointer; }
+.play-header small { color: var(--accent-deep); font-weight: 800; font-size: clamp(.75rem, 1.8vh, 1rem); }
+.play-header h1 { font-size: clamp(1.45rem, 4.2vh, 2.5rem); line-height: .9; }
+.back-button { width: 3.4rem; height: 3.4rem; border: 0; border-radius: 1.1rem; background: white; color: #443847; font-size: 1.7rem; font-weight: 800; box-shadow: 0 .28rem 0 rgba(73,55,67,.12); cursor: pointer; }
 .header-slot { display: block; min-height: 1px; }
 
-.subgame-grid { width: min(100%, 980px); margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.subgame-grid { width: 100%; max-width: 980px; margin: .6rem auto 0; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.7rem, 2vh, 1.3rem); }
 .subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.subgame-card { min-height: 19rem; padding: 2rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .7rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
-.subgame-card > span { margin-bottom: auto; font-size: 5rem; }
+.subgame-card { min-height: 0; padding: 1.3rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 1.7rem; color: white; text-align: left; box-shadow: 0 .5rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
+.subgame-card > span { margin-bottom: auto; font-size: clamp(2.6rem, 8vh, 4.4rem); }
 .subgame-card small { font-size: .9rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
 .subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.5vw, 2.8rem); line-height: .95; }
 .subgame-card b { margin-top: .6rem; }
@@ -63,58 +63,51 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .food-choice { background: linear-gradient(145deg, #c5d85a, #7bb63c); }
 .emotions-choice { background: linear-gradient(145deg, #ff8eb8, #e45a9a); }
 
-.mode-switch { width: fit-content; margin: 0 auto clamp(1.2rem, 4vw, 2rem); padding: .35rem; display: flex; gap: .35rem; border-radius: 1.2rem; background: rgba(255,255,255,.7); }
-.mode-switch button { min-height: 3.3rem; padding: .65rem clamp(.85rem, 3vw, 1.6rem); border: 0; border-radius: .95rem; background: transparent; color: #756675; font-size: clamp(.92rem, 2.4vw, 1.05rem); font-weight: 800; cursor: pointer; }
+.mode-switch { width: fit-content; margin: 0 auto .55rem; padding: .28rem; display: flex; gap: .3rem; border-radius: 1.1rem; background: rgba(255,255,255,.7); flex-shrink: 0; }
+.mode-switch button { min-height: 2.7rem; padding: .45rem clamp(.7rem, 2.4vw, 1.3rem); border: 0; border-radius: .85rem; background: transparent; color: #756675; font-size: clamp(.85rem, 2vh, 1rem); font-weight: 800; cursor: pointer; }
 .mode-switch button.active { background: white; color: var(--accent-deep); box-shadow: 0 .18rem .7rem rgba(70,54,66,.12); }
 
-.learning-grid { width: min(100%, 980px); margin: 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.65rem, 2vw, 1.25rem); }
+.learning-grid { width: 100%; max-width: 1100px; margin: 0 auto; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: clamp(.4rem, 1.2vh, .9rem); }
 .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.learning-card { min-height: clamp(7.5rem, 17vw, 12rem); border: 0; border-radius: clamp(1.15rem, 3vw, 1.8rem); background: white; color: var(--accent-deep); box-shadow: 0 .5rem 0 color-mix(in srgb, var(--accent) 22%, transparent), 0 .9rem 1.7rem rgba(74,52,62,.08); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
-.learning-card span { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(3.3rem, 9vw, 6rem); font-weight: 800; line-height: 1; }
-.learning-card small { display: block; margin-top: .25rem; font-size: clamp(1rem, 2.5vw, 1.35rem); opacity: .65; }
+.learning-card { min-height: 0; height: 100%; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
+.learning-card span { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6.5vh, 4.2rem); font-weight: 800; line-height: 1; }
+.learning-card small { display: block; margin-top: .1rem; font-size: clamp(.7rem, 1.8vh, 1.1rem); opacity: .65; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
 
-.memory-wrap { width: min(100%, 820px); margin: 0 auto; }
-.memory-wrap.is-mixed { width: min(100%, 980px); }
-.memory-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.55rem, 2vw, 1rem); perspective: 1000px; }
-.memory-grid.is-mixed { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.7rem, 2.2vw, 1.2rem); }
-.memory-grid.is-mixed .memory-card { aspect-ratio: 1; }
-.memory-grid.is-mixed .memory-card .card-front { font-size: clamp(2.6rem, 8vw, 5.2rem); }
-.memory-card { position: relative; aspect-ratio: .78; min-width: 0; border: 0; border-radius: clamp(1rem, 2.5vw, 1.6rem); background: var(--accent); color: white; box-shadow: 0 .48rem 0 var(--accent-deep); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
+.memory-wrap { width: 100%; max-width: 980px; margin: 0 auto; flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+.memory-wrap.is-mixed { max-width: 1100px; }
+.memory-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: clamp(.35rem, 1.1vh, .8rem); perspective: 1000px; }
+.memory-grid.is-mixed { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.memory-card { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; border: 0; border-radius: clamp(.7rem, 1.5vh, 1.3rem); background: var(--accent); color: white; box-shadow: 0 .28rem 0 var(--accent-deep); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
 .memory-card .card-back, .memory-card .card-front { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; }
-.memory-card .card-back { font-size: clamp(1.8rem, 6vw, 3.5rem); opacity: .8; }
-.memory-card .card-front { transform: rotateY(180deg); font-family: 'Baloo 2', sans-serif; font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; }
-.memory-card.is-open { transform: rotateY(180deg); background: white; color: var(--accent-deep); box-shadow: 0 .48rem 0 color-mix(in srgb, var(--accent) 25%, transparent); }
-.memory-card.is-matched { background: #fff9c8; box-shadow: 0 .48rem 0 #e8d878; }
-.win-card { margin: 1.5rem auto 0; padding: 1rem 1.3rem; width: fit-content; display: flex; align-items: center; gap: .8rem; border-radius: 1.4rem; background: white; box-shadow: 0 .5rem 1.5rem rgba(80,60,70,.12); animation: pop-in .3s ease-out; }
-.win-card > span { font-size: 2rem; }
-.win-card strong { font-family: 'Baloo 2', sans-serif; font-size: 1.5rem; }
-.win-card button { min-height: 3rem; padding: .5rem 1rem; border: 0; border-radius: .9rem; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
+.memory-card .card-back { font-size: clamp(1.1rem, 4.2vh, 2.4rem); opacity: .8; }
+.memory-card .card-front { transform: rotateY(180deg); font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6vh, 3.6rem); font-weight: 800; }
+.memory-card.is-open { transform: rotateY(180deg); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 25%, transparent); }
+.memory-card.is-matched { background: #fff9c8; box-shadow: 0 .28rem 0 #e8d878; }
+.win-card { position: absolute; left: 50%; bottom: .4rem; z-index: 6; padding: .7rem 1rem; width: max-content; max-width: calc(100% - 1rem); display: flex; align-items: center; gap: .6rem; border-radius: 1.2rem; background: white; box-shadow: 0 .4rem 1.2rem rgba(80,60,70,.16); animation: pop-in .3s ease-out; }
+.win-card > span { font-size: 1.6rem; }
+.win-card strong { font-family: 'Baloo 2', sans-serif; font-size: 1.25rem; }
+.win-card button { min-height: 2.6rem; padding: .4rem .85rem; border: 0; border-radius: .8rem; background: var(--accent); color: white; font-weight: 800; cursor: pointer; }
 
 @keyframes happy-bounce { to { transform: translateY(-.5rem) scale(1.04); } }
-@keyframes pop-in { from { transform: scale(.75); opacity: 0; } }
+@keyframes pop-in { from { transform: translateX(-50%) scale(.75); opacity: 0; } to { transform: translateX(-50%) scale(1); } }
+.win-card { transform: translateX(-50%); }
 
 @media (max-width: 700px) {
-  .home-shell { justify-content: flex-start; }
-  .brand { justify-content: flex-start; margin-top: 1rem; margin-bottom: 2rem; }
-  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: 1fr; }
-  .game-card { min-height: 13.5rem; }
-  .subgame-card { min-height: 12rem; }
-  .game-icon, .subgame-card > span, .game-card.numbers .game-icon { font-size: 4.4rem; }
-  .play-header { grid-template-columns: 3.45rem 1fr 6.6rem; gap: .35rem; }
-  .back-button { width: 3.45rem; height: 3.45rem; font-size: 1.7rem; }
-  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .learning-card { min-height: 7.2rem; }
+  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .play-header { grid-template-columns: 3.2rem 1fr 6.4rem; gap: .3rem; }
+  .back-button { width: 3.1rem; height: 3.1rem; font-size: 1.5rem; }
+  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food, .learning-grid.emotions { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .memory-grid, .memory-grid.is-mixed { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 
 @media (max-width: 420px) {
   .mode-switch { width: 100%; }
   .mode-switch button { flex: 1; padding-inline: .35rem; }
-  .memory-grid, .memory-grid.is-mixed { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .memory-card { aspect-ratio: .83; }
-  .memory-grid.is-mixed .memory-card { aspect-ratio: 1; }
   .win-card { flex-wrap: wrap; justify-content: center; }
 }
 
