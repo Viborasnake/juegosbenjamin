@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './lib/supabase'
 
-type CategoryId = 'letters' | 'numbers' | 'world'
-type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food'
+type CategoryId = 'letters' | 'numbers' | 'world' | 'mix'
+type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'mix'
 type Mode = 'explore' | 'memory'
 type Locale = 'es' | 'en'
 
@@ -53,6 +53,7 @@ const categoryMeta = {
   letters: { eyebrow: 'A · B · C', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
   world: { eyebrow: '🐶 · 🍎 · 🚗', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
+  mix: { eyebrow: '🐶 · A · 🍎', title: { es: 'Memorice', en: 'Memory' }, icon: '🧠', color: 'purple' },
 } as const
 
 const gameMeta = {
@@ -62,6 +63,7 @@ const gameMeta = {
   animals: { title: { es: 'Animales', en: 'Animals' }, prompt: { es: 'Toca un animal', en: 'Tap an animal' }, icon: '🐶', color: 'green' },
   vehicles: { title: { es: 'Vehículos', en: 'Vehicles' }, prompt: { es: 'Toca un vehículo', en: 'Tap a vehicle' }, icon: '🚗', color: 'orange' },
   food: { title: { es: 'Frutas y verduras', en: 'Fruit & veg' }, prompt: { es: 'Toca una fruta o verdura', en: 'Tap a fruit or veggie' }, icon: '🍎', color: 'yellow' },
+  mix: { title: { es: 'Memorice', en: 'Memory' }, prompt: { es: 'Encuentra las parejas', en: 'Find the pairs' }, icon: '🧠', color: 'purple' },
 } as const
 
 const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'y griega', 'zee']
@@ -73,10 +75,25 @@ const englishNames: Record<GameId, Record<string, string>> = {
   animals: Object.fromEntries(['dog', 'cat', 'cow', 'pig', 'horse', 'sheep', 'elephant', 'lion', 'monkey', 'frog'].map((name, index) => [animals[index][0], name])),
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
   food: Object.fromEntries(['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato'].map((name, index) => [foods[index][0], name])),
+  mix: {},
 }
+
+const MIX_PAIRS = 10
 
 const audioFile = (locale: Locale, game: GameId, position: number) =>
   `${import.meta.env.BASE_URL}audio/${locale}/${game}/${position}.wav`
+
+const spokenFor = (item: LearningItem, locale: Locale) =>
+  locale === 'en' ? englishNames[item.game][item.symbol] ?? item.spoken_text : item.spoken_text
+
+function mixedItems(items: LearningItem[], locale: Locale) {
+  const seen = new Set<string>()
+  return shuffle(items.filter((item) => item.game !== 'vowels' && item.game !== 'mix' && !(locale === 'en' && item.symbol === 'Ñ'))).filter((item) => {
+    if (seen.has(item.symbol)) return false
+    seen.add(item.symbol)
+    return true
+  })
+}
 
 function shuffle<T>(items: T[]) {
   const result = [...items]
@@ -165,13 +182,18 @@ function useSpeech(locale: Locale) {
   return { speak, speaking }
 }
 
-function Home({ onSelect, locale, onLocale }: { onSelect: (category: CategoryId) => void; locale: Locale; onLocale: (locale: Locale) => void }) {
+function LanguageSwitch({ locale, onLocale }: { locale: Locale; onLocale: (locale: Locale) => void }) {
+  return (
+    <div className="language-switch" aria-label="Idioma / Language">
+      <button type="button" className={locale === 'es' ? 'active' : ''} onClick={() => onLocale('es')}>ES</button>
+      <button type="button" className={locale === 'en' ? 'active' : ''} onClick={() => onLocale('en')}>EN</button>
+    </div>
+  )
+}
+
+function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; locale: Locale }) {
   return (
     <main className="home-shell">
-      <div className="language-switch" aria-label="Idioma / Language">
-        <button type="button" className={locale === 'es' ? 'active' : ''} onClick={() => onLocale('es')}>ES</button>
-        <button type="button" className={locale === 'en' ? 'active' : ''} onClick={() => onLocale('en')}>EN</button>
-      </div>
       <header className="brand">
         <span className="brand-sun" aria-hidden="true">☀️</span>
         <div><p>{locale === 'es' ? 'Hola, Benjamín' : 'Hi, Benjamín'}</p><h1>{locale === 'es' ? '¿Jugamos?' : 'Let’s play!'}</h1></div>
@@ -213,7 +235,7 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label="Volver al inicio">←</button>
         <div><small>{locale === 'es' ? 'Elige un juego' : 'Choose a game'}</small><h1>{categoryMeta[category].title[locale]}</h1></div>
-        <span className="header-icon" aria-hidden="true">{categoryMeta[category].icon}</span>
+        <span className="header-slot" aria-hidden="true" />
       </header>
       <section className={`subgame-grid ${category}`}>
         {subgames[category].map((option) => (
@@ -227,24 +249,25 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
   )
 }
 
-function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void }) {
+function MemoryGame({ items, game, locale, speak, pairCount = 5 }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath: string) => void; pairCount?: number }) {
   const [round, setRound] = useState(0)
-  const memoryItems = useMemo(() => shuffle(items).slice(0, 5), [items, round])
+  const memoryItems = useMemo(() => shuffle(items).slice(0, pairCount), [items, round, pairCount])
   const deck = useMemo(() => shuffle(memoryItems.flatMap((item) => [
     { ...item, cardId: `${item.id}-a` }, { ...item, cardId: `${item.id}-b` },
   ])), [memoryItems])
   const [openCards, setOpenCards] = useState<string[]>([])
   const [matched, setMatched] = useState<number[]>([])
   const [locked, setLocked] = useState(false)
+  const mixed = game === 'mix'
 
   useEffect(() => { setOpenCards([]); setMatched([]); setLocked(false) }, [game, round])
 
   const selectCard = (card: MemoryCard) => {
     if (locked || openCards.includes(card.cardId) || matched.includes(card.id)) return
-    const spokenText = locale === 'en' ? englishNames[game][card.symbol] ?? card.spoken_text : card.spoken_text
+    const spokenText = spokenFor(card, locale)
     if (!openCards.length) {
       setOpenCards([card.cardId])
-      speak(spokenText, card.symbol, audioFile(locale, game, card.position))
+      speak(spokenText, card.symbol, audioFile(locale, card.game, card.position))
       return
     }
     const firstCard = deck.find((candidate) => candidate.cardId === openCards[0])
@@ -256,20 +279,20 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
       setLocked(true)
       window.setTimeout(() => { setOpenCards([]); setLocked(false) }, 900)
     }
-    speak(spokenText, card.symbol, audioFile(locale, game, card.position))
+    speak(spokenText, card.symbol, audioFile(locale, card.game, card.position))
   }
 
   const won = memoryItems.length > 0 && matched.length === memoryItems.length
   return (
-    <section className="memory-wrap" aria-label={`${locale === 'es' ? 'Memorice de' : 'Memory game with'} ${gameMeta[game].title[locale]}`}>
-      <div className="memory-grid">
+    <section className={`memory-wrap ${mixed ? 'is-mixed' : ''}`} aria-label={`${locale === 'es' ? 'Memorice de' : 'Memory game with'} ${gameMeta[game].title[locale]}`}>
+      <div className={`memory-grid ${mixed ? 'is-mixed' : ''}`}>
         {deck.map((card) => {
           const visible = openCards.includes(card.cardId) || matched.includes(card.id)
           return (
             <button className={`memory-card ${visible ? 'is-open' : ''} ${matched.includes(card.id) ? 'is-matched' : ''}`}
               key={card.cardId} type="button" onClick={() => selectCard(card)}
-              aria-label={visible ? (locale === 'en' ? englishNames[game][card.symbol] ?? card.spoken_text : card.spoken_text) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
-              <span className="card-back" aria-hidden="true">{game === 'numbers' ? '★' : '●'}</span>
+              aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
+              <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
               <span className="card-front">{card.symbol}</span>
             </button>
           )
@@ -282,35 +305,39 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
 }
 
 function Game({ game, items, locale, onBack }: { game: GameId; items: LearningItem[]; locale: Locale; onBack: () => void }) {
-  const [mode, setMode] = useState<Mode>('explore')
+  const mixed = game === 'mix'
+  const [mode, setMode] = useState<Mode>(mixed ? 'memory' : 'explore')
   const { speak, speaking } = useSpeech(locale)
   const meta = gameMeta[game]
   const gameItems = useMemo(
-    () => items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ')),
-    [game, items, locale],
+    () => mixed
+      ? mixedItems(items, locale)
+      : items.filter((item) => item.game === game && !(locale === 'en' && game === 'alphabet' && item.symbol === 'Ñ')),
+    [game, items, locale, mixed],
   )
-  const spoken = (item: LearningItem) => locale === 'en' ? englishNames[game][item.symbol] ?? item.spoken_text : item.spoken_text
   return (
     <main className={`play-shell theme-${meta.color}`}>
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver' : 'Back'}>←</button>
-        <div><small>{mode === 'explore' ? meta.prompt[locale] : (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs')}</small><h1>{meta.title[locale]}</h1></div>
-        <span className="header-icon" aria-hidden="true">{meta.icon}</span>
+        <div><small>{mixed || mode === 'memory' ? (locale === 'es' ? 'Encuentra las parejas' : 'Find the pairs') : meta.prompt[locale]}</small><h1>{meta.title[locale]}</h1></div>
+        <span className="header-slot" aria-hidden="true" />
       </header>
-      <nav className="mode-switch" aria-label="Modo de juego">
-        <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
-        <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
-      </nav>
-      {mode === 'explore' ? (
+      {mixed ? null : (
+        <nav className="mode-switch" aria-label="Modo de juego">
+          <button className={mode === 'explore' ? 'active' : ''} type="button" onClick={() => setMode('explore')}>👆 {locale === 'es' ? 'Explorar' : 'Explore'}</button>
+          <button className={mode === 'memory' ? 'active' : ''} type="button" onClick={() => setMode('memory')}>🧠 {locale === 'es' ? 'Memorice' : 'Memory'}</button>
+        </nav>
+      )}
+      {mode === 'explore' && !mixed ? (
         <section className={`learning-grid ${game}`} aria-label={meta.prompt[locale]}>
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
-              type="button" onClick={() => speak(spoken(item), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spoken(item)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
+              type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
               <span>{item.symbol}</span><small aria-hidden="true">🔊</small>
             </button>
           ))}
         </section>
-      ) : <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} />}
+      ) : <MemoryGame items={gameItems} game={game} locale={locale} speak={speak} pairCount={mixed ? MIX_PAIRS : 5} />}
     </main>
   )
 }
@@ -326,10 +353,16 @@ export default function App() {
   const selectCategory = (next: CategoryId) => {
     setCategory(next)
     if (next === 'numbers') setGame('numbers')
+    if (next === 'mix') setGame('mix')
   }
   const changeLocale = (next: Locale) => { localStorage.setItem('benjamin-language', next); setLocale(next) }
 
-  if (game) return <Game game={game} items={items} locale={locale} onBack={goBack} />
-  if (category === 'letters' || category === 'world') return <SubMenu category={category} locale={locale} onSelect={setGame} onBack={goHome} />
-  return <Home onSelect={selectCategory} locale={locale} onLocale={changeLocale} />
+  return (
+    <>
+      <LanguageSwitch locale={locale} onLocale={changeLocale} />
+      {game ? <Game game={game} items={items} locale={locale} onBack={goBack} />
+        : category === 'letters' || category === 'world' ? <SubMenu category={category} locale={locale} onSelect={setGame} onBack={goHome} />
+        : <Home onSelect={selectCategory} locale={locale} />}
+    </>
+  )
 }

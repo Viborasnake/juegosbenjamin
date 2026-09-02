@@ -6,7 +6,7 @@ html, body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh;
 button { font: inherit; }
 
 .home-shell { position: relative; width: min(100%, 1080px); min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: max(2rem, env(safe-area-inset-top)) clamp(1.25rem, 5vw, 4rem) max(2rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; justify-content: center; }
-.language-switch { position: absolute; top: max(1rem, env(safe-area-inset-top)); right: clamp(1.25rem, 5vw, 4rem); padding: .3rem; display: flex; gap: .2rem; border-radius: 1rem; background: white; box-shadow: 0 .25rem .9rem rgba(70,50,60,.1); }
+.language-switch { position: fixed; z-index: 40; top: max(.85rem, env(safe-area-inset-top)); right: clamp(.75rem, 3vw, 2rem); padding: .3rem; display: flex; gap: .2rem; border-radius: 1rem; background: white; box-shadow: 0 .25rem .9rem rgba(70,50,60,.1); }
 .language-switch button { min-width: 3.1rem; min-height: 2.7rem; border: 0; border-radius: .75rem; background: transparent; color: #897783; font-weight: 800; cursor: pointer; }
 .language-switch button.active { background: #463c56; color: white; }
 .brand { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: clamp(2rem, 6vh, 4.5rem); }
@@ -15,8 +15,8 @@ button { font: inherit; }
 .brand h1, .play-header h1 { margin: 0; font-family: 'Baloo 2', sans-serif; letter-spacing: -.04em; }
 .brand h1 { font-size: clamp(3rem, 10vw, 6rem); line-height: .95; }
 
-.game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 1.7rem); }
-.game-card { position: relative; min-height: clamp(17.5rem, 44vw, 24rem); padding: clamp(1.4rem, 4vw, 2.2rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2.25rem; color: white; text-align: left; box-shadow: 0 .75rem 0 rgba(74, 51, 54, .12), 0 1.2rem 2.6rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
+.game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 1.7rem); }
+.game-card { position: relative; min-height: clamp(14rem, 32vw, 20rem); padding: clamp(1.4rem, 4vw, 2.2rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2.25rem; color: white; text-align: left; box-shadow: 0 .75rem 0 rgba(74, 51, 54, .12), 0 1.2rem 2.6rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
 .game-card::after { content: ''; position: absolute; width: 10rem; height: 10rem; border-radius: 50%; background: rgba(255,255,255,.13); right: -2.5rem; top: -3rem; }
 .game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active { transform: translateY(.35rem) scale(.985); }
 button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
@@ -29,6 +29,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .game-card.coral { background: linear-gradient(145deg, #ff826d, #ef5366); }
 .game-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
+.game-card.purple { background: linear-gradient(145deg, #a67be4, #7359c8); }
 .game-icon { position: relative; z-index: 1; display: block; font-size: clamp(4rem, 11vw, 6.8rem); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
 .game-card.numbers .game-icon { align-self: flex-end; font-size: clamp(3.6rem, 10vw, 6.1rem); }
 .game-copy { position: relative; z-index: 1; width: 100%; margin-top: 1.15rem; display: flex; flex-direction: column; }
@@ -40,12 +41,12 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 
 .play-shell, .choice-shell { min-height: 100vh; min-height: 100dvh; padding: max(1rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) max(1.5rem, env(safe-area-inset-bottom)); background: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 18%, transparent) 0 11rem, transparent 11.1rem), var(--soft); }
 .choice-shell { display: flex; flex-direction: column; justify-content: center; }
-.play-header { width: min(100%, 980px); margin: 0 auto 1.2rem; display: grid; grid-template-columns: 4.25rem 1fr 4.5rem; align-items: center; gap: 1rem; }
+.play-header { width: min(100%, 980px); margin: 0 auto 1.2rem; display: grid; grid-template-columns: 4.25rem 1fr 7rem; align-items: center; gap: 1rem; }
 .play-header > div { text-align: center; }
 .play-header small { color: var(--accent-deep); font-weight: 800; font-size: clamp(.9rem, 2.5vw, 1.2rem); }
 .play-header h1 { font-size: clamp(2.8rem, 8vw, 5rem); line-height: .9; }
 .back-button { width: 4.1rem; height: 4.1rem; border: 0; border-radius: 1.35rem; background: white; color: #443847; font-size: 2.1rem; font-weight: 800; box-shadow: 0 .35rem 0 rgba(73,55,67,.12); cursor: pointer; }
-.header-icon { text-align: center; font-size: clamp(2.7rem, 7vw, 4.2rem); }
+.header-slot { display: block; min-height: 1px; }
 
 .subgame-grid { width: min(100%, 980px); margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
 .subgame-grid.world { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -74,7 +75,11 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-card.is-speaking { animation: happy-bounce .42s ease-in-out 2 alternate; background: var(--accent); color: white; }
 
 .memory-wrap { width: min(100%, 820px); margin: 0 auto; }
+.memory-wrap.is-mixed { width: min(100%, 980px); }
 .memory-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.55rem, 2vw, 1rem); perspective: 1000px; }
+.memory-grid.is-mixed { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.7rem, 2.2vw, 1.2rem); }
+.memory-grid.is-mixed .memory-card { aspect-ratio: 1; }
+.memory-grid.is-mixed .memory-card .card-front { font-size: clamp(2.6rem, 8vw, 5.2rem); }
 .memory-card { position: relative; aspect-ratio: .78; min-width: 0; border: 0; border-radius: clamp(1rem, 2.5vw, 1.6rem); background: var(--accent); color: white; box-shadow: 0 .48rem 0 var(--accent-deep); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
 .memory-card .card-back, .memory-card .card-front { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; }
 .memory-card .card-back { font-size: clamp(1.8rem, 6vw, 3.5rem); opacity: .8; }
@@ -96,7 +101,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
   .game-card { min-height: 13.5rem; }
   .subgame-card { min-height: 12rem; }
   .game-icon, .subgame-card > span, .game-card.numbers .game-icon { font-size: 4.4rem; }
-  .play-header { grid-template-columns: 3.7rem 1fr 3.7rem; gap: .35rem; }
+  .play-header { grid-template-columns: 3.45rem 1fr 6.6rem; gap: .35rem; }
   .back-button { width: 3.45rem; height: 3.45rem; font-size: 1.7rem; }
   .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .learning-card { min-height: 7.2rem; }
@@ -105,8 +110,9 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 @media (max-width: 420px) {
   .mode-switch { width: 100%; }
   .mode-switch button { flex: 1; padding-inline: .35rem; }
-  .memory-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .memory-grid, .memory-grid.is-mixed { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .memory-card { aspect-ratio: .83; }
+  .memory-grid.is-mixed .memory-card { aspect-ratio: 1; }
   .win-card { flex-wrap: wrap; justify-content: center; }
 }
 
