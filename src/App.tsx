@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from './lib/supabase'
 
 type CategoryId = 'letters' | 'numbers' | 'world'
-type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles'
+type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food'
 type Mode = 'explore' | 'memory'
 type Locale = 'es' | 'en'
 
@@ -20,12 +20,13 @@ const letterNames = [
   ['A', 'a'], ['B', 'be'], ['C', 'ce'], ['D', 'de'], ['E', 'e'], ['F', 'efe'], ['G', 'ge'],
   ['H', 'hache'], ['I', 'i'], ['J', 'jota'], ['K', 'ka'], ['L', 'ele'], ['M', 'eme'], ['N', 'ene'],
   ['Ñ', 'eñe'], ['O', 'o'], ['P', 'pe'], ['Q', 'cu'], ['R', 'erre'], ['S', 'ese'], ['T', 'te'],
-  ['U', 'u'], ['V', 'uve'], ['W', 'doble uve'], ['X', 'equis'], ['Y', 'ye'], ['Z', 'zeta'],
+  ['U', 'u'], ['V', 'uve'], ['W', 'doble uve'], ['X', 'equis'], ['Y', 'y griega'], ['Z', 'zeta'],
 ]
 
 const numberNames = ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce']
-const animals = [['🐶', 'perro'], ['🐱', 'gato'], ['🐮', 'vaca'], ['🐷', 'cerdo'], ['🐴', 'caballo'], ['🐑', 'oveja'], ['🐘', 'elefante'], ['🦁', 'león'], ['🐵', 'mono'], ['🐸', 'rana']]
+const animals = [['🐶', 'perro'], ['🐱', 'gato'], ['🐮', 'vaca'], ['🐷', 'chancho'], ['🐴', 'caballo'], ['🐑', 'oveja'], ['🐘', 'elefante'], ['🦁', 'león'], ['🐵', 'mono'], ['🐸', 'rana']]
 const vehicles = [['🚗', 'auto'], ['🚌', 'autobús'], ['🚂', 'tren'], ['🚲', 'bicicleta'], ['✈️', 'avión'], ['🚁', 'helicóptero'], ['🚢', 'barco'], ['🚜', 'tractor'], ['🚒', 'camión de bomberos'], ['🏍️', 'moto']]
+const foods = [['🍎', 'manzana'], ['🍌', 'plátano'], ['🍓', 'frutilla'], ['🍊', 'naranja'], ['🍇', 'uva'], ['🍉', 'sandía'], ['🥕', 'zanahoria'], ['🍅', 'tomate'], ['🌽', 'choclo'], ['🥔', 'papa']]
 
 const fallbackItems: LearningItem[] = [
   ...['A', 'E', 'I', 'O', 'U'].map((symbol, index) => ({
@@ -43,12 +44,15 @@ const fallbackItems: LearningItem[] = [
   ...vehicles.map(([symbol, spoken_text], index) => ({
     id: index + 401, game: 'vehicles' as const, symbol, spoken_text, position: index + 1,
   })),
+  ...foods.map(([symbol, spoken_text], index) => ({
+    id: index + 501, game: 'food' as const, symbol, spoken_text, position: index + 1,
+  })),
 ]
 
 const categoryMeta = {
   letters: { eyebrow: 'A · B · C', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
-  world: { eyebrow: '🐶 · 🚗 · 🐸', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
+  world: { eyebrow: '🐶 · 🍎 · 🚗', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
 } as const
 
 const gameMeta = {
@@ -57,9 +61,10 @@ const gameMeta = {
   numbers: { title: { es: 'Números', en: 'Numbers' }, prompt: { es: 'Toca un número', en: 'Tap a number' }, icon: '🚂', color: 'blue' },
   animals: { title: { es: 'Animales', en: 'Animals' }, prompt: { es: 'Toca un animal', en: 'Tap an animal' }, icon: '🐶', color: 'green' },
   vehicles: { title: { es: 'Vehículos', en: 'Vehicles' }, prompt: { es: 'Toca un vehículo', en: 'Tap a vehicle' }, icon: '🚗', color: 'orange' },
+  food: { title: { es: 'Frutas y verduras', en: 'Fruit & veg' }, prompt: { es: 'Toca una fruta o verdura', en: 'Tap a fruit or veggie' }, icon: '🍎', color: 'yellow' },
 } as const
 
-const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'why', 'zee']
+const englishLetterNames = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'y griega', 'zee']
 
 const englishNames: Record<GameId, Record<string, string>> = {
   vowels: { A: 'ay', E: 'ee', I: 'eye', O: 'oh', U: 'you' },
@@ -67,6 +72,7 @@ const englishNames: Record<GameId, Record<string, string>> = {
   numbers: Object.fromEntries(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'].map((name, index) => [String(index + 1), name])),
   animals: Object.fromEntries(['dog', 'cat', 'cow', 'pig', 'horse', 'sheep', 'elephant', 'lion', 'monkey', 'frog'].map((name, index) => [animals[index][0], name])),
   vehicles: Object.fromEntries(['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle'].map((name, index) => [vehicles[index][0], name])),
+  food: Object.fromEntries(['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato'].map((name, index) => [foods[index][0], name])),
 }
 
 const audioFile = (locale: Locale, game: GameId, position: number) =>
@@ -91,7 +97,7 @@ function useLearningItems() {
       .then(({ data, error }) => {
         if (!active || error || !data?.length) return
         const valid = data.filter((item): item is LearningItem =>
-          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles'].includes(item.game))
+          ['vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food'].includes(item.game))
         if (valid.length) {
           const remoteGames = new Set(valid.map((item) => item.game))
           setItems([...valid, ...fallbackItems.filter((item) => !remoteGames.has(item.game))])
@@ -189,24 +195,33 @@ function Home({ onSelect, locale, onLocale }: { onSelect: (category: CategoryId)
   )
 }
 
+const subgames: Record<'letters' | 'world', { id: GameId; icon: string; hint: string; choiceClass: string }[]> = {
+  letters: [
+    { id: 'vowels', icon: '🌈', hint: 'A · E · I · O · U', choiceClass: 'vowels-choice' },
+    { id: 'alphabet', icon: '🐝', hint: 'A · B · C · D · E...', choiceClass: 'alphabet-choice' },
+  ],
+  world: [
+    { id: 'animals', icon: '🐶', hint: '🐶 · 🐱 · 🐮', choiceClass: 'animals-choice' },
+    { id: 'vehicles', icon: '🚗', hint: '🚗 · 🚌 · 🚂', choiceClass: 'vehicles-choice' },
+    { id: 'food', icon: '🍎', hint: '🍎 · 🥕 · 🍌', choiceClass: 'food-choice' },
+  ],
+}
+
 function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' | 'world'; locale: Locale; onSelect: (game: GameId) => void; onBack: () => void }) {
-  const isLetters = category === 'letters'
   return (
-    <main className={`choice-shell ${isLetters ? 'theme-coral' : 'theme-green'}`}>
+    <main className={`choice-shell ${category === 'letters' ? 'theme-coral' : 'theme-green'}`}>
       <header className="play-header">
         <button className="back-button" type="button" onClick={onBack} aria-label="Volver al inicio">←</button>
         <div><small>{locale === 'es' ? 'Elige un juego' : 'Choose a game'}</small><h1>{categoryMeta[category].title[locale]}</h1></div>
         <span className="header-icon" aria-hidden="true">{categoryMeta[category].icon}</span>
       </header>
-      <section className="subgame-grid">
-        <button className={`subgame-card ${isLetters ? 'vowels-choice' : 'animals-choice'}`} type="button" onClick={() => onSelect(isLetters ? 'vowels' : 'animals')}>
-          <span aria-hidden="true">{isLetters ? '🌈' : '🐶'}</span><small>{isLetters ? 'A · E · I · O · U' : '🐶 · 🐱 · 🐮'}</small>
-          <strong>{gameMeta[isLetters ? 'vowels' : 'animals'].title[locale]}</strong><b>{locale === 'es' ? 'Jugar' : 'Play'} →</b>
-        </button>
-        <button className={`subgame-card ${isLetters ? 'alphabet-choice' : 'vehicles-choice'}`} type="button" onClick={() => onSelect(isLetters ? 'alphabet' : 'vehicles')}>
-          <span aria-hidden="true">{isLetters ? '🐝' : '🚗'}</span><small>{isLetters ? 'A · B · C · D · E...' : '🚗 · 🚌 · 🚂'}</small>
-          <strong>{gameMeta[isLetters ? 'alphabet' : 'vehicles'].title[locale]}</strong><b>{locale === 'es' ? 'Jugar' : 'Play'} →</b>
-        </button>
+      <section className={`subgame-grid ${category}`}>
+        {subgames[category].map((option) => (
+          <button className={`subgame-card ${option.choiceClass}`} key={option.id} type="button" onClick={() => onSelect(option.id)}>
+            <span aria-hidden="true">{option.icon}</span><small>{option.hint}</small>
+            <strong>{gameMeta[option.id].title[locale]}</strong><b>{locale === 'es' ? 'Jugar' : 'Play'} →</b>
+          </button>
+        ))}
       </section>
     </main>
   )
@@ -307,7 +322,7 @@ export default function App() {
   const items = useLearningItems()
 
   const goHome = () => { window.history.replaceState(null, '', window.location.pathname); setGame(null); setCategory(null) }
-  const goBack = () => ['vowels', 'alphabet', 'animals', 'vehicles'].includes(game ?? '') ? setGame(null) : goHome()
+  const goBack = () => ['vowels', 'alphabet', 'animals', 'vehicles', 'food'].includes(game ?? '') ? setGame(null) : goHome()
   const selectCategory = (next: CategoryId) => {
     setCategory(next)
     if (next === 'numbers') setGame('numbers')

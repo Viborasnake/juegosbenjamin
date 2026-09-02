@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap');
 
 :root { font-family: 'Nunito', system-ui, sans-serif; color: #392f3b; background: #fff8e8; font-synthesis: none; text-rendering: optimizeLegibility; }
-* { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; background: #fff8e8; }
-button { font: inherit; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+html, body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; background: #fff8e8; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+button { font: inherit; }
 
 .home-shell { position: relative; width: min(100%, 1080px); min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: max(2rem, env(safe-area-inset-top)) clamp(1.25rem, 5vw, 4rem) max(2rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; justify-content: center; }
 .language-switch { position: absolute; top: max(1rem, env(safe-area-inset-top)); right: clamp(1.25rem, 5vw, 4rem); padding: .3rem; display: flex; gap: .2rem; border-radius: 1rem; background: white; box-shadow: 0 .25rem .9rem rgba(70,50,60,.1); }
@@ -25,6 +25,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .theme-purple { --accent: #8468d9; --accent-deep: #6549b4; --soft: #f3efff; }
 .green, .theme-green { --accent: #38a88b; --accent-deep: #26806b; --soft: #eafaf4; }
 .theme-orange { --accent: #ee8b3e; --accent-deep: #c96a25; --soft: #fff4e8; }
+.theme-yellow { --accent: #8fbf3a; --accent-deep: #6a9628; --soft: #f3fbe6; }
 .game-card.coral { background: linear-gradient(145deg, #ff826d, #ef5366); }
 .game-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
@@ -46,16 +47,18 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .back-button { width: 4.1rem; height: 4.1rem; border: 0; border-radius: 1.35rem; background: white; color: #443847; font-size: 2.1rem; font-weight: 800; box-shadow: 0 .35rem 0 rgba(73,55,67,.12); cursor: pointer; }
 .header-icon { text-align: center; font-size: clamp(2.7rem, 7vw, 4.2rem); }
 
-.subgame-grid { width: min(100%, 820px); margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.subgame-grid { width: min(100%, 980px); margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.subgame-grid.world { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .subgame-card { min-height: 19rem; padding: 2rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .7rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
 .subgame-card > span { margin-bottom: auto; font-size: 5rem; }
 .subgame-card small { font-size: .9rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
-.subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2.2rem, 6vw, 3.7rem); line-height: 1; }
+.subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.5vw, 2.8rem); line-height: .95; }
 .subgame-card b { margin-top: .6rem; }
 .vowels-choice { background: linear-gradient(145deg, #ff9b5e, #f16267); }
 .alphabet-choice { background: linear-gradient(145deg, #a67be4, #7359c8); }
 .animals-choice { background: linear-gradient(145deg, #5fcba7, #2e9f82); }
 .vehicles-choice { background: linear-gradient(145deg, #ffad5c, #e97838); }
+.food-choice { background: linear-gradient(145deg, #c5d85a, #7bb63c); }
 
 .mode-switch { width: fit-content; margin: 0 auto clamp(1.2rem, 4vw, 2rem); padding: .35rem; display: flex; gap: .35rem; border-radius: 1.2rem; background: rgba(255,255,255,.7); }
 .mode-switch button { min-height: 3.3rem; padding: .65rem clamp(.85rem, 3vw, 1.6rem); border: 0; border-radius: .95rem; background: transparent; color: #756675; font-size: clamp(.92rem, 2.4vw, 1.05rem); font-weight: 800; cursor: pointer; }
@@ -64,7 +67,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-grid { width: min(100%, 980px); margin: 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.65rem, 2vw, 1.25rem); }
 .learning-grid.numbers { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .learning-grid.alphabet { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.learning-grid.animals, .learning-grid.vehicles { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.learning-grid.animals, .learning-grid.vehicles, .learning-grid.food { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .learning-card { min-height: clamp(7.5rem, 17vw, 12rem); border: 0; border-radius: clamp(1.15rem, 3vw, 1.8rem); background: white; color: var(--accent-deep); box-shadow: 0 .5rem 0 color-mix(in srgb, var(--accent) 22%, transparent), 0 .9rem 1.7rem rgba(74,52,62,.08); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
 .learning-card span { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(3.3rem, 9vw, 6rem); font-weight: 800; line-height: 1; }
 .learning-card small { display: block; margin-top: .25rem; font-size: clamp(1rem, 2.5vw, 1.35rem); opacity: .65; }
@@ -89,13 +92,13 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 @media (max-width: 700px) {
   .home-shell { justify-content: flex-start; }
   .brand { justify-content: flex-start; margin-top: 1rem; margin-bottom: 2rem; }
-  .game-grid, .subgame-grid { grid-template-columns: 1fr; }
+  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: 1fr; }
   .game-card { min-height: 13.5rem; }
   .subgame-card { min-height: 12rem; }
   .game-icon, .subgame-card > span, .game-card.numbers .game-icon { font-size: 4.4rem; }
   .play-header { grid-template-columns: 3.7rem 1fr 3.7rem; gap: .35rem; }
   .back-button { width: 3.45rem; height: 3.45rem; font-size: 1.7rem; }
-  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .learning-grid, .learning-grid.numbers, .learning-grid.alphabet, .learning-grid.animals, .learning-grid.vehicles, .learning-grid.food { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .learning-card { min-height: 7.2rem; }
 }
 

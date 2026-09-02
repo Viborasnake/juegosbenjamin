@@ -1,7 +1,7 @@
 -- Contenido educativo público y sin datos personales.
 create table if not exists public.learning_items (
   id bigint primary key generated always as identity,
-  game text not null check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles')),
+  game text not null check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food')),
   symbol text not null,
   spoken_text text not null,
   position smallint not null check (position > 0),
@@ -11,7 +11,7 @@ create table if not exists public.learning_items (
 
 alter table public.learning_items drop constraint if exists learning_items_game_check;
 alter table public.learning_items add constraint learning_items_game_check
-  check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles'));
+  check (game in ('vowels', 'alphabet', 'numbers', 'animals', 'vehicles', 'food'));
 
 alter table public.learning_items enable row level security;
 revoke all on table public.learning_items from anon, authenticated;
@@ -33,16 +33,19 @@ values
   ('alphabet', 'O', 'o', 16), ('alphabet', 'P', 'pe', 17), ('alphabet', 'Q', 'cu', 18),
   ('alphabet', 'R', 'erre', 19), ('alphabet', 'S', 'ese', 20), ('alphabet', 'T', 'te', 21),
   ('alphabet', 'U', 'u', 22), ('alphabet', 'V', 'uve', 23), ('alphabet', 'W', 'doble uve', 24),
-  ('alphabet', 'X', 'equis', 25), ('alphabet', 'Y', 'ye', 26), ('alphabet', 'Z', 'zeta', 27),
+  ('alphabet', 'X', 'equis', 25), ('alphabet', 'Y', 'y griega', 26), ('alphabet', 'Z', 'zeta', 27),
   ('numbers', '1', 'uno', 1), ('numbers', '2', 'dos', 2), ('numbers', '3', 'tres', 3),
   ('numbers', '4', 'cuatro', 4), ('numbers', '5', 'cinco', 5), ('numbers', '6', 'seis', 6),
   ('numbers', '7', 'siete', 7), ('numbers', '8', 'ocho', 8), ('numbers', '9', 'nueve', 9),
   ('numbers', '10', 'diez', 10), ('numbers', '11', 'once', 11), ('numbers', '12', 'doce', 12),
   ('animals', '🐶', 'perro', 1), ('animals', '🐱', 'gato', 2), ('animals', '🐮', 'vaca', 3),
-  ('animals', '🐷', 'cerdo', 4), ('animals', '🐴', 'caballo', 5), ('animals', '🐑', 'oveja', 6),
+  ('animals', '🐷', 'chancho', 4), ('animals', '🐴', 'caballo', 5), ('animals', '🐑', 'oveja', 6),
   ('animals', '🐘', 'elefante', 7), ('animals', '🦁', 'león', 8), ('animals', '🐵', 'mono', 9), ('animals', '🐸', 'rana', 10),
   ('vehicles', '🚗', 'auto', 1), ('vehicles', '🚌', 'autobús', 2), ('vehicles', '🚂', 'tren', 3),
   ('vehicles', '🚲', 'bicicleta', 4), ('vehicles', '✈️', 'avión', 5), ('vehicles', '🚁', 'helicóptero', 6),
-  ('vehicles', '🚢', 'barco', 7), ('vehicles', '🚜', 'tractor', 8), ('vehicles', '🚒', 'camión de bomberos', 9), ('vehicles', '🏍️', 'moto', 10)
+  ('vehicles', '🚢', 'barco', 7), ('vehicles', '🚜', 'tractor', 8), ('vehicles', '🚒', 'camión de bomberos', 9), ('vehicles', '🏍️', 'moto', 10),
+  ('food', '🍎', 'manzana', 1), ('food', '🍌', 'plátano', 2), ('food', '🍓', 'frutilla', 3),
+  ('food', '🍊', 'naranja', 4), ('food', '🍇', 'uva', 5), ('food', '🍉', 'sandía', 6),
+  ('food', '🥕', 'zanahoria', 7), ('food', '🍅', 'tomate', 8), ('food', '🌽', 'choclo', 9), ('food', '🥔', 'papa', 10)
 on conflict (game, symbol) do update
 set spoken_text = excluded.spoken_text, position = excluded.position;

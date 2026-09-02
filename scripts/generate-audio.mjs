@@ -8,24 +8,26 @@ const run = promisify(execFile)
 const outputRoot = join(process.cwd(), 'public', 'audio')
 const temporaryRoot = join(process.cwd(), '.audio-temp')
 
-const alphabetEs = ['a', 'be', 'ce', 'de', 'e', 'efe', 'ge', 'hache', 'i', 'jota', 'ka', 'ele', 'eme', 'ene', 'eñe', 'o', 'pe', 'cu', 'erre', 'ese', 'te', 'u', 'uve', 'doble uve', 'equis', 'ye', 'zeta']
+const alphabetEs = ['a', 'be', 'ce', 'de', 'e', 'efe', 'ge', 'hache', 'i', 'jota', 'ka', 'ele', 'eme', 'ene', 'eñe', 'o', 'pe', 'cu', 'erre', 'ese', 'te', 'u', 'uve', 'doble uve', 'equis', 'y griega', 'zeta']
 // Letter names, not uppercase glyphs: `say "A"` becomes "capital A".
-const alphabetEn = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'why', 'zee']
+const alphabetEn = ['ay', 'bee', 'see', 'dee', 'ee', 'ef', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'ar', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'y griega', 'zee']
 const numbersEs = ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce']
 const numbersEn = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
-const animalsEs = ['perro', 'gato', 'vaca', 'cerdo', 'caballo', 'oveja', 'elefante', 'león', 'mono', 'rana']
+const animalsEs = ['perro', 'gato', 'vaca', 'chancho', 'caballo', 'oveja', 'elefante', 'león', 'mono', 'rana']
 const animalsEn = ['dog', 'cat', 'cow', 'pig', 'horse', 'sheep', 'elephant', 'lion', 'monkey', 'frog']
 const vehiclesEs = ['auto', 'autobús', 'tren', 'bicicleta', 'avión', 'helicóptero', 'barco', 'tractor', 'camión de bomberos', 'moto']
 const vehiclesEn = ['car', 'bus', 'train', 'bicycle', 'airplane', 'helicopter', 'boat', 'tractor', 'fire truck', 'motorcycle']
+const foodEs = ['manzana', 'plátano', 'frutilla', 'naranja', 'uva', 'sandía', 'zanahoria', 'tomate', 'choclo', 'papa']
+const foodEn = ['apple', 'banana', 'strawberry', 'orange', 'grapes', 'watermelon', 'carrot', 'tomato', 'corn', 'potato']
 
 const collections = {
   es: {
     voice: 'Paulina',
-    games: { vowels: ['a', 'e', 'i', 'o', 'u'], alphabet: alphabetEs, numbers: numbersEs, animals: animalsEs, vehicles: vehiclesEs },
+    games: { vowels: ['a', 'e', 'i', 'o', 'u'], alphabet: alphabetEs, numbers: numbersEs, animals: animalsEs, vehicles: vehiclesEs, food: foodEs },
   },
   en: {
     voice: 'Samantha',
-    games: { vowels: ['ay', 'ee', 'eye', 'oh', 'you'], alphabet: alphabetEn, numbers: numbersEn, animals: animalsEn, vehicles: vehiclesEn },
+    games: { vowels: ['ay', 'ee', 'eye', 'oh', 'you'], alphabet: alphabetEn, numbers: numbersEn, animals: animalsEn, vehicles: vehiclesEn, food: foodEn },
   },
 }
 
@@ -42,7 +44,8 @@ for (const [locale, { voice, games }] of Object.entries(collections)) {
       const aiffPath = join(temporaryRoot, `${locale}-${game}-${position}.aiff`)
       const outputPath = join(gameDirectory, `${position}.wav`)
       tasks.push(async () => {
-        await run('say', ['-v', voice, '-r', locale === 'es' ? '145' : '160', '-o', aiffPath, word])
+        const spokenVoice = word === 'y griega' ? 'Paulina' : voice
+        await run('say', ['-v', spokenVoice, '-r', spokenVoice === 'Paulina' ? '145' : '160', '-o', aiffPath, word])
         await run('afconvert', ['-f', 'WAVE', '-d', 'LEI16@22050', aiffPath, outputPath])
         if (statSync(outputPath).size <= 4096) throw new Error(`Audio vacío: ${outputPath}`)
       })
