@@ -58,7 +58,7 @@ const fallbackItems: LearningItem[] = [
 ]
 
 const categoryMeta = {
-  letters: { eyebrow: 'A · B · C', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
+  letters: { eyebrow: 'a · b · c', title: { es: 'Letras', en: 'Letters' }, icon: '🎈', color: 'coral' },
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
   world: { eyebrow: '🐶 · 🍎 · 😄', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
   planets: { eyebrow: '☀️ · 🌍 · 🪐', title: { es: 'Planetas', en: 'Planets' }, icon: '🪐', color: 'navy' },
@@ -93,6 +93,9 @@ const audioFile = (locale: Locale, game: GameId, position: number) =>
 
 const spokenFor = (item: LearningItem, locale: Locale) =>
   locale === 'en' ? englishNames[item.game][item.symbol] ?? item.spoken_text : item.spoken_text
+
+const shownSymbol = (item: LearningItem) =>
+  item.game === 'vowels' || item.game === 'alphabet' ? item.symbol.toLocaleLowerCase('es') : item.symbol
 
 function shuffle<T>(items: T[]) {
   const result = [...items]
@@ -218,8 +221,8 @@ function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; 
 
 const subgames: Record<'letters' | 'world', { id: GameId; icon: string; hint: string; choiceClass: string }[]> = {
   letters: [
-    { id: 'vowels', icon: '🌈', hint: 'A · E · I · O · U', choiceClass: 'vowels-choice' },
-    { id: 'alphabet', icon: '🐝', hint: 'A · B · C · D · E...', choiceClass: 'alphabet-choice' },
+    { id: 'vowels', icon: '🌈', hint: 'a · e · i · o · u', choiceClass: 'vowels-choice' },
+    { id: 'alphabet', icon: '🐝', hint: 'a · b · c · d · e...', choiceClass: 'alphabet-choice' },
   ],
   world: [
     { id: 'animals', icon: '🐶', hint: '🐶 · 🐱 · 🐮', choiceClass: 'animals-choice' },
@@ -292,7 +295,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
               key={card.cardId} type="button" onClick={() => selectCard(card)}
               aria-label={visible ? spokenFor(card, locale) : (locale === 'es' ? 'Carta escondida' : 'Hidden card')} aria-pressed={visible}>
               <span className="card-back" aria-hidden="true">{card.game === 'numbers' ? '★' : '●'}</span>
-              <span className="card-front">{card.symbol}</span>
+              <span className="card-front">{shownSymbol(card)}</span>
             </button>
           )
         })}
@@ -327,7 +330,7 @@ function Game({ game, items, locale, onBack }: { game: GameId; items: LearningIt
           {gameItems.map((item) => (
             <button className={`learning-card ${speaking === item.symbol ? 'is-speaking' : ''}`} key={item.id}
               type="button" onClick={() => speak(spokenFor(item, locale), item.symbol, audioFile(locale, game, item.position))} aria-label={`${spokenFor(item, locale)}. ${locale === 'es' ? 'Toca para escuchar.' : 'Tap to listen.'}`}>
-              <span>{item.symbol}</span>
+              <span>{shownSymbol(item)}</span>
             </button>
           ))}
         </section>
