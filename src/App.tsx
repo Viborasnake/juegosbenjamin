@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from 'react'
 import { supabase } from './lib/supabase'
+import { stories, type Story } from './stories'
 
-type CategoryId = 'letters' | 'numbers' | 'world' | 'planets'
+type CategoryId = 'letters' | 'numbers' | 'world' | 'planets' | 'stories'
 type GameId = 'vowels' | 'alphabet' | 'numbers' | 'animals' | 'vehicles' | 'food' | 'emotions' | 'planets'
 type Mode = 'explore' | 'memory' | 'find' | 'space'
 type Locale = 'es' | 'en'
@@ -62,6 +63,15 @@ const categoryMeta = {
   numbers: { eyebrow: '1 · 2 · 3', title: { es: 'Números', en: 'Numbers' }, icon: '🚂', color: 'blue' },
   world: { eyebrow: '🐶 · 🍎 · 😄', title: { es: 'Mundo', en: 'World' }, icon: '🌎', color: 'green' },
   planets: { eyebrow: '☀️ · 🌍 · 🪐', title: { es: 'Planetas', en: 'Planets' }, icon: '🪐', color: 'navy' },
+} as const
+
+const homeCategories = Object.keys(categoryMeta) as Exclude<CategoryId, 'stories'>[]
+
+const storiesMeta = {
+  eyebrow: '🌙 · 📖 · ⭐',
+  title: { es: 'Cuentos', en: 'Stories' },
+  subtitle: { es: 'Los tíos te cuentan', en: 'Told by the uncles' },
+  icon: '📖',
 } as const
 
 const gameMeta = {
@@ -252,7 +262,7 @@ function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; 
         <div><p>{locale === 'es' ? 'Hola, Benjamín' : 'Hi, Benjamín'}</p><h1>{locale === 'es' ? '¿Jugamos?' : 'Let’s play!'}</h1></div>
       </header>
       <section className="game-grid" aria-label="Elige una categoría">
-        {(Object.keys(categoryMeta) as CategoryId[]).map((categoryId) => {
+        {homeCategories.map((categoryId) => {
           const category = categoryMeta[categoryId]
           const title = category.title[locale]
           return (
@@ -267,6 +277,15 @@ function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; 
           )
         })}
       </section>
+      <button className="stories-banner" type="button" onClick={() => onSelect('stories')}
+        aria-label={locale === 'es' ? 'Abrir cuentos de los tíos' : 'Open stories from the uncles'}>
+        <span className="game-icon" aria-hidden="true">{storiesMeta.icon}</span>
+        <span className="game-copy">
+          <small>{storiesMeta.eyebrow}</small>
+          <strong>{storiesMeta.title[locale]}</strong>
+          <span className="play-label">{storiesMeta.subtitle[locale]} <b aria-hidden="true">→</b></span>
+        </span>
+      </button>
       <p className="grownup-note">{locale === 'es' ? 'Toca una tarjeta para comenzar' : 'Tap a card to begin'}</p>
     </main>
   )
@@ -307,6 +326,121 @@ function SubMenu({ category, locale, onSelect, onBack }: { category: 'letters' |
   )
 }
 
+function storyAudio(file: string) {
+  return `${import.meta.env.BASE_URL}audio/cuentos/${file}`
+}
+
+function StoryPlayer({ story, locale, onBack }: { story: Story; locale: Locale; onBack: () => void }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [playing, setPlaying] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const src = story.audio ? storyAudio(story.audio) : null
+  const stars = useMemo(() => Array.from({ length: 18 }, (_, index) => ({
+    left: `${(index * 41) % 100}%`,
+    top: `${(index * 29) % 86}%`,
+    size: index % 4 === 0 ? 3 : 2,
+    delay: `${(index % 6) * 0.7}s`,
+  })), [])
+
+  useEffect(() => {
+    setPlaying(false)
+    setProgress(0)
+    const audio = audioRef.current
+    if (audio) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }, [story.id])
+
+  useEffect(() => () => { audioRef.current?.pause() }, [])
+
+  const toggle = () => {
+    const audio = audioRef.current
+    if (!audio || !src) return
+    if (playing) audio.pause()
+    else void audio.play().catch(() => setPlaying(false))
+  }
+
+  const seek = (event: MouseEvent<HTMLButtonElement>) => {
+    const audio = audioRef.current
+    if (!audio || !audio.duration) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    audio.currentTime = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)) * audio.duration
+  }
+
+  return (
+    <main className="play-shell theme-plum">
+      <header className="play-header">
+        <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver a los cuentos' : 'Back to stories'}>←</button>
+        <div><small>{locale === 'es' ? 'Cuenta cuentos' : 'Story time'}</small><h1>{story.title[locale]}</h1></div>
+        <span className="header-slot" aria-hidden="true" />
+      </header>
+      <section className="story-player" aria-label={story.title[locale]}>
+        {stars.map((star, index) => (
+          <span className="story-star" key={index} style={{ left: star.left, top: star.top, width: star.size, height: star.size, animationDelay: star.delay }} />
+        ))}
+        <span className="story-moon" aria-hidden="true">🌙</span>
+        <button className={`story-hero ${playing ? 'is-playing' : ''}`} type="button" onClick={toggle} disabled={!src}
+          aria-label={src ? (playing ? (locale === 'es' ? 'Pausar' : 'Pause') : (locale === 'es' ? 'Escuchar el cuento' : 'Play the story')) : (locale === 'es' ? 'El cuento llega pronto' : 'This story is coming soon')}>
+          <span className="story-icon" aria-hidden="true">{story.icon}</span>
+          <strong>{story.title[locale]}</strong>
+          <em>{locale === 'es' ? `Contado por ${story.teller[locale]}` : `Told by ${story.teller[locale]}`}</em>
+        </button>
+        {src ? (
+          <>
+            <button className="story-play" type="button" onClick={toggle} aria-hidden="true">{playing ? '⏸' : '▶'}</button>
+            <button className="story-progress" type="button" onClick={seek} style={{ '--progress': `${progress}%` } as CSSProperties} aria-label={locale === 'es' ? 'Progreso del cuento' : 'Story progress'}>
+              <span />
+            </button>
+            <audio ref={audioRef} src={src} preload="metadata"
+              onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+              onEnded={() => { setPlaying(false); setProgress(0) }}
+              onTimeUpdate={(event) => {
+                const audio = event.currentTarget
+                setProgress(audio.duration ? (audio.currentTime / audio.duration) * 100 : 0)
+              }} />
+          </>
+        ) : (
+          <p className="story-soon">{locale === 'es' ? 'Pronto un tío te lo va a contar' : 'An uncle will tell it soon'}</p>
+        )}
+      </section>
+    </main>
+  )
+}
+
+function Stories({ locale, onBack }: { locale: Locale; onBack: () => void }) {
+  const [storyId, setStoryId] = useState<string | null>(null)
+  const story = stories.find((item) => item.id === storyId)
+
+  if (story) return <StoryPlayer story={story} locale={locale} onBack={() => setStoryId(null)} />
+
+  return (
+    <main className="choice-shell theme-plum">
+      <header className="play-header">
+        <button className="back-button" type="button" onClick={onBack} aria-label={locale === 'es' ? 'Volver al inicio' : 'Back home'}>←</button>
+        <div><small>{locale === 'es' ? 'Toca un cuento' : 'Tap a story'}</small><h1>{storiesMeta.title[locale]}</h1></div>
+        <span className="header-slot" aria-hidden="true" />
+      </header>
+      <section className="story-grid" aria-label={locale === 'es' ? 'Cuentos de los tíos' : 'Stories from the uncles'}>
+        {stories.map((item) => {
+          const ready = Boolean(item.audio)
+          return (
+            <div className="choice-slot" key={item.id}>
+              <button className={`story-card ${item.color} ${ready ? 'is-ready' : 'is-soon'}`} type="button" onClick={() => setStoryId(item.id)}
+                aria-label={`${item.title[locale]}. ${ready ? item.teller[locale] : (locale === 'es' ? 'Pronto' : 'Coming soon')}`}>
+                <span aria-hidden="true">{item.icon}</span>
+                <small>{item.teller[locale]}</small>
+                <strong>{item.title[locale]}</strong>
+                <b>{ready ? (locale === 'es' ? 'Escuchar →' : 'Listen →') : (locale === 'es' ? 'Pronto' : 'Soon')}</b>
+              </button>
+            </div>
+          )
+        })}
+      </section>
+    </main>
+  )
+}
+
 function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; game: GameId; locale: Locale; speak: (text: string, symbol: string, audioPath?: string) => void }) {
   const [round, setRound] = useState(0)
   const memoryItems = useMemo(() => shuffle(items).slice(0, 5), [items, round])
@@ -342,7 +476,7 @@ function MemoryGame({ items, game, locale, speak }: { items: LearningItem[]; gam
   const won = memoryItems.length > 0 && matched.length === memoryItems.length
   return (
     <section className="memory-wrap" aria-label={`${locale === 'es' ? 'Memorice de' : 'Memory game with'} ${gameMeta[game].title[locale]}`}>
-      <div className="memory-grid">
+      <div className={`memory-grid ${game}`}>
         {deck.map((card) => {
           const visible = openCards.includes(card.cardId) || matched.includes(card.id)
           return (
@@ -407,7 +541,7 @@ function FindGame({ items, locale, speak }: { items: LearningItem[]; locale: Loc
 
   if (!target) return null
   return (
-    <section className="find-wrap" aria-label={locale === 'es' ? 'Encuentra' : 'Find it'}>
+    <section className={`find-wrap ${items[0]?.game ?? ''}`} aria-label={locale === 'es' ? 'Encuentra' : 'Find it'}>
       <button className="find-prompt" type="button" onClick={ask} aria-label={findQuestion(target, locale)}>
         <small>{findAskLine(target, locale)}</small>
         <strong>{promptLabel(target, locale)}</strong>
@@ -560,6 +694,7 @@ export default function App() {
     <>
       <LanguageSwitch locale={locale} onLocale={changeLocale} />
       {game ? <Game game={game} items={items} locale={locale} onBack={goBack} />
+        : category === 'stories' ? <Stories locale={locale} onBack={goHome} />
         : category === 'letters' || category === 'world' ? <SubMenu category={category} locale={locale} onSelect={setGame} onBack={goHome} />
         : <Home onSelect={selectCategory} locale={locale} />}
     </>

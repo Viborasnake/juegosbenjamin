@@ -14,6 +14,15 @@ La app funciona con contenido local sin variables. Para leer desde el proyecto S
 
 Las pronunciaciones en español e inglés están incluidas en `public/audio`, para que el juego no dependa de las voces instaladas en el dispositivo. Se pueden regenerar en macOS con `npm run generate:audio`.
 
+## Cuentos de los tíos
+
+La sección **Cuentos** espera las grabaciones de la familia. Cuando llegue un audio:
+
+1. Déjalo en `public/audio/cuentos/` (`mp3`, `m4a`, `ogg` o `wav`).
+2. En `src/stories.ts`, pon el nombre del archivo en `audio` y quién lo cuenta en `teller`.
+
+Hasta que haya audio, el cuento se muestra como **Pronto**.
+
 ## Vercel
 
 El juego se publica en `https://benjamin.frontbook.cl/juegos/` (el quiz de cumpleaños sigue en `https://benjamin.frontbook.cl/`). También queda en `https://juegosbenjamin.vercel.app/juegos/`.

@@ -10,17 +10,17 @@ button { font: inherit; }
 .language-switch { position: fixed; z-index: 40; top: max(.85rem, env(safe-area-inset-top)); right: clamp(.75rem, 3vw, 2rem); padding: .3rem; display: flex; gap: .2rem; border-radius: 1rem; background: white; box-shadow: 0 .25rem .9rem rgba(70,50,60,.1); }
 .language-switch button { min-width: 3.1rem; min-height: 2.7rem; border: 0; border-radius: .75rem; background: transparent; color: #897783; font-weight: 800; cursor: pointer; }
 .language-switch button.active { background: #463c56; color: white; }
-.brand { display: flex; align-items: center; justify-content: center; gap: .8rem; margin-bottom: clamp(.6rem, 2vh, 1.4rem); flex-shrink: 0; }
+.brand { display: flex; align-items: center; justify-content: center; gap: .8rem; margin-bottom: clamp(.35rem, 1.2vh, .9rem); flex-shrink: 0; }
 .brand-sun { font-size: clamp(2.4rem, 7vh, 4.2rem); filter: drop-shadow(0 .3rem 0 rgba(194, 138, 27, .18)); }
 .brand p { margin: 0 0 -.25rem; color: #7b657c; font-size: clamp(.9rem, 2.4vh, 1.2rem); font-weight: 700; }
 .brand h1, .play-header h1 { margin: 0; font-family: 'Baloo 2', sans-serif; letter-spacing: -.04em; }
 .brand h1 { font-size: clamp(2.1rem, 6.5vh, 4rem); line-height: .95; }
 
-.game-grid { --cols: 2; --rows: 2; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.7rem, 1.8vh, 1.3rem); container-type: size; }
+.game-grid { --cols: 2; --rows: 2; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.55rem, 1.5vh, 1.1rem); container-type: size; }
 .choice-slot { min-width: 0; width: min(20rem, calc((100cqh - (var(--rows) - 1) * 1rem) / var(--rows) * 3 / 4)); aspect-ratio: 3 / 4; justify-self: center; }
-.game-card { position: relative; min-height: 0; width: 100%; height: 100%; padding: clamp(1rem, 2.4vh, 1.8rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .55rem 0 rgba(74, 51, 54, .12), 0 1rem 2rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; }
+.game-card { position: relative; min-height: 0; width: 100%; height: 100%; padding: clamp(.85rem, 2vh, 1.5rem); display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; border: 0; border-radius: 2rem; color: white; text-align: left; box-shadow: 0 .55rem 0 rgba(74, 51, 54, .12), 0 1rem 2rem rgba(78, 54, 53, .13); overflow: hidden; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; touch-action: manipulation; container-type: size; }
 .game-card::after { content: ''; position: absolute; width: 10rem; height: 10rem; border-radius: 50%; background: rgba(255,255,255,.13); right: -2.5rem; top: -3rem; }
-.game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active { transform: translateY(.35rem) scale(.985); }
+.game-card:active, .subgame-card:active, .learning-card:active, .memory-card:active, .story-card:active { transform: translateY(.35rem) scale(.985); }
 button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .coral, .theme-coral { --accent: #f05c68; --accent-deep: #ca4055; --soft: #fff0eb; }
 .blue, .theme-blue { --accent: #4d8fdf; --accent-deep: #3668bb; --soft: #edf6ff; }
@@ -35,14 +35,52 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .game-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
 .game-card.purple { background: linear-gradient(145deg, #a67be4, #7359c8); }
 .game-card.navy { background: linear-gradient(145deg, #6d7ee8, #4456c8); }
-.game-icon { position: relative; z-index: 1; display: block; font-size: clamp(4.4rem, 16vmin, 8.2rem); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
-.game-card.numbers .game-icon, .game-card.navy .game-icon { align-self: flex-end; font-size: clamp(4.2rem, 15vmin, 7.8rem); }
+.game-card.plum { background: linear-gradient(145deg, #c786ea, #7d52d4); }
+.theme-plum { --accent: #a56adf; --accent-deep: #7344b8; --soft: #f4eefc; }
+.game-icon { position: relative; z-index: 1; display: block; font-size: min(46cqh, 68cqw); line-height: 1; filter: drop-shadow(0 .35rem 0 rgba(80, 45, 55, .17)); }
+.game-card.numbers .game-icon, .game-card.navy .game-icon { align-self: flex-end; font-size: min(44cqh, 64cqw); }
 .game-copy { position: relative; z-index: 1; width: 100%; margin-top: auto; display: flex; flex-direction: column; flex-shrink: 0; }
-.game-copy small { font-size: clamp(.75rem, 1.8vh, .95rem); letter-spacing: .08em; font-weight: 800; opacity: .9; }
-.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.4vh, 3rem); line-height: .95; }
-.play-label { margin-top: .35rem; font-size: clamp(.9rem, 2vh, 1.05rem); font-weight: 800; }
+.game-copy small { font-size: clamp(.78rem, 8cqw, 1rem); letter-spacing: .08em; font-weight: 800; opacity: .9; }
+.game-copy strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.45rem, 16cqw, 2.45rem); line-height: .95; }
+.play-label { margin-top: .25rem; font-size: clamp(.85rem, 9cqw, 1.05rem); font-weight: 800; }
 .play-label b { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; margin-left: .25rem; border-radius: 50%; background: rgba(255,255,255,.2); }
-.grownup-note { margin: .7rem 0 0; text-align: center; color: #8a7881; font-size: .9rem; font-weight: 700; flex-shrink: 0; }
+.grownup-note { margin: .55rem 0 0; text-align: center; color: #8a7881; font-size: .9rem; font-weight: 700; flex-shrink: 0; }
+
+.stories-banner { flex-shrink: 0; width: min(100%, 42rem); align-self: center; padding: .85rem 1.15rem; display: flex; align-items: center; gap: .9rem; border: 0; border-radius: 1.6rem; color: white; text-align: left; background: linear-gradient(145deg, #c786ea, #7d52d4); box-shadow: 0 .5rem 0 rgba(78,54,60,.13), 0 1rem 2rem rgba(78, 54, 53, .12); cursor: pointer; transition: transform .15s ease; touch-action: manipulation; }
+.stories-banner:active { transform: translateY(.35rem) scale(.985); }
+.stories-banner .game-icon { font-size: clamp(2.8rem, 8vh, 3.8rem); }
+.stories-banner .game-copy { margin-top: 0; }
+.stories-banner .game-copy strong { font-size: clamp(1.8rem, 4.6vh, 2.7rem); }
+.stories-banner .play-label { margin-top: .15rem; font-size: clamp(.95rem, 2.1vh, 1.15rem); }
+
+.story-grid { --cols: 2; --rows: 3; width: 100%; max-width: 980px; margin: .4rem auto 0; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.55rem, 1.6vh, 1.1rem); container-type: size; }
+.story-card { min-height: 0; width: 100%; height: 100%; padding: 1.1rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 1.7rem; color: white; text-align: left; box-shadow: 0 .5rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
+.story-card > span { margin-bottom: auto; font-size: clamp(3.4rem, 11vh, 5.8rem); line-height: 1; filter: drop-shadow(0 .28rem 0 rgba(80, 45, 55, .16)); }
+.story-card small { font-size: clamp(.85rem, 1.8vh, 1rem); font-weight: 800; letter-spacing: .04em; opacity: .9; }
+.story-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.45rem, 3.6vh, 2.2rem); line-height: .95; }
+.story-card b { margin-top: .45rem; font-size: clamp(.9rem, 2vh, 1.05rem); }
+.story-card.is-soon { filter: saturate(.86); }
+.story-card.coral { background: linear-gradient(145deg, #ff826d, #ef5366); }
+.story-card.blue { background: linear-gradient(145deg, #62b6ed, #497bd6); }
+.story-card.green { background: linear-gradient(145deg, #5bc7a5, #2d9b83); }
+.story-card.purple { background: linear-gradient(145deg, #a67be4, #7359c8); }
+.story-card.orange { background: linear-gradient(145deg, #ffad5c, #e97838); }
+.story-card.pink { background: linear-gradient(145deg, #ff8eb8, #e45a9a); }
+
+.story-player { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border-radius: 1.6rem; background: radial-gradient(circle at 50% 18%, #5a3d8c 0 18%, #2a1b4a 58%, #160e2c 100%); color: white; }
+.story-star { position: absolute; border-radius: 50%; background: rgba(255,255,255,.75); animation: twinkle 3.6s ease-in-out infinite; pointer-events: none; }
+.story-moon { position: absolute; top: 8%; right: 9%; font-size: clamp(2.2rem, 7vh, 3.4rem); pointer-events: none; filter: drop-shadow(0 .2rem .6rem rgba(255, 220, 140, .35)); }
+.story-hero { position: relative; z-index: 1; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+.story-hero .story-icon { font-size: clamp(6.4rem, 28vmin, 11rem); line-height: 1; filter: drop-shadow(0 .4rem 0 rgba(20, 10, 40, .28)); }
+.story-hero.is-playing .story-icon { animation: happy-bounce .9s ease-in-out infinite alternate; }
+.story-hero small { font-weight: 800; letter-spacing: .08em; opacity: .8; font-size: clamp(.9rem, 2vh, 1.15rem); }
+.story-hero strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2rem, 5.5vh, 3.4rem); line-height: .95; }
+.story-hero em { font-style: normal; font-weight: 800; opacity: .85; font-size: clamp(1rem, 2.3vh, 1.25rem); }
+.story-play { position: relative; z-index: 1; width: clamp(4.6rem, 14vh, 6.2rem); height: clamp(4.6rem, 14vh, 6.2rem); margin-top: 1.1rem; border: 0; border-radius: 50%; background: white; color: #5b3d9a; font-size: clamp(1.8rem, 5vh, 2.4rem); box-shadow: 0 .4rem 0 rgba(20, 10, 40, .22); cursor: pointer; }
+.story-play:disabled { opacity: .45; cursor: default; }
+.story-soon { position: relative; z-index: 1; margin: 1.1rem 1rem 0; text-align: center; font-weight: 800; font-size: clamp(1rem, 2.4vh, 1.25rem); opacity: .9; }
+.story-progress { position: relative; z-index: 1; width: min(22rem, calc(100% - 2.4rem)); height: .7rem; margin-top: 1.3rem; border: 0; padding: 0; border-radius: 999px; background: rgba(255,255,255,.22); overflow: hidden; cursor: pointer; }
+.story-progress > span { display: block; height: 100%; border-radius: inherit; background: #ffd76a; width: var(--progress, 0%); }
 
 .play-shell, .choice-shell { height: 100dvh; max-height: 100dvh; overflow: hidden; padding: max(.7rem, env(safe-area-inset-top)) clamp(.8rem, 3vw, 2rem) max(.7rem, env(safe-area-inset-bottom)); display: flex; flex-direction: column; background: radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 18%, transparent) 0 11rem, transparent 11.1rem), var(--soft); }
 .play-header { width: 100%; max-width: 1100px; margin: 0 auto .45rem; display: grid; grid-template-columns: 3.6rem 1fr 6.8rem; align-items: center; gap: .6rem; flex-shrink: 0; }
@@ -55,9 +93,9 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .subgame-grid { --cols: 2; --rows: 1; width: 100%; max-width: 980px; margin: .6rem auto 0; flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols), max-content); grid-auto-rows: auto; align-content: center; justify-content: center; gap: clamp(.7rem, 2vh, 1.3rem); container-type: size; }
 .subgame-grid.world { --rows: 2; }
 .subgame-card { min-height: 0; width: 100%; height: 100%; padding: 1.3rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; border: 0; border-radius: 1.7rem; color: white; text-align: left; box-shadow: 0 .5rem 0 rgba(78,54,60,.13); cursor: pointer; transition: transform .15s ease; }
-.subgame-card > span { margin-bottom: auto; font-size: clamp(2.6rem, 8vh, 4.4rem); }
-.subgame-card small { font-size: .9rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
-.subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(1.7rem, 4.5vw, 2.8rem); line-height: .95; }
+.subgame-card > span { margin-bottom: auto; font-size: clamp(3.6rem, 12vh, 6.2rem); }
+.subgame-card small { font-size: 1rem; font-weight: 800; letter-spacing: .06em; opacity: .9; }
+.subgame-card strong { font-family: 'Baloo 2', sans-serif; font-size: clamp(2rem, 5.4vw, 3.2rem); line-height: .95; }
 .subgame-card b { margin-top: .6rem; }
 .vowels-choice { background: linear-gradient(145deg, #ff9b5e, #f16267); }
 .alphabet-choice { background: linear-gradient(145deg, #a67be4, #7359c8); }
@@ -79,8 +117,9 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .learning-grid.planets .learning-card { background: #14183a; }
 .learn-slot { min-width: 0; width: min(calc((100cqw - (var(--cols) - 1) * .7rem) / var(--cols)), calc((100cqh - (var(--rows) - 1) * .8rem) / var(--rows) * 3 / 4)); aspect-ratio: 3 / 4; justify-self: center; }
 .item-art { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: center; pointer-events: none; }
-.learning-card { min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent), 0 .45rem 1rem rgba(70,54,66,.1); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; }
-.learning-card span { display: grid; place-items: center; height: 100%; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.35rem, 4.4vh, 3.2rem); font-weight: 800; line-height: 1; }
+.learning-card { min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; border: 0; border-radius: clamp(.8rem, 1.6vh, 1.4rem); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 22%, transparent), 0 .45rem 1rem rgba(70,54,66,.1); cursor: pointer; transition: transform .14s ease, box-shadow .14s ease; touch-action: manipulation; container-type: size; overflow: hidden; }
+.learning-card .card-art { display: grid; place-items: center; height: 100%; font-family: 'Baloo 2', sans-serif; font-size: min(76cqh, 84cqw); font-weight: 800; line-height: 1; }
+.learning-grid.numbers .card-art, .find-wrap.numbers .card-art { font-size: min(58cqh, 64cqw); }
 .learning-card.has-art { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .35rem .45rem .4rem; gap: .15rem; }
 .learning-card.has-art span.card-art { flex: 1 1 0; min-height: 0; height: 0; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; container-type: size; }
 .learning-card.has-art .card-art .item-art { height: calc(100cqh * var(--planet-scale, .86)); width: auto; max-width: 100cqw; object-fit: contain; object-position: center; }
@@ -103,10 +142,11 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .memory-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, auto); align-content: center; gap: clamp(.45rem, 1.4vh, 1rem); perspective: 1000px; container-type: size; }
 .memory-slot { min-width: 0; width: min(100%, calc((100cqh - 1.2rem) * 3 / 8)); aspect-ratio: 3 / 4; justify-self: center; }
 .find-slot { min-width: 0; min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; container-type: size; }
-.memory-card { position: relative; width: 100%; height: 100%; aspect-ratio: 3 / 4; border: 0; border-radius: clamp(.85rem, 1.8vh, 1.35rem); background: var(--accent); color: white; box-shadow: 0 .32rem 0 var(--accent-deep), 0 .55rem 1.1rem rgba(70,54,66,.16); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; }
+.memory-card { position: relative; width: 100%; height: 100%; aspect-ratio: 3 / 4; border: 0; border-radius: clamp(.85rem, 1.8vh, 1.35rem); background: var(--accent); color: white; box-shadow: 0 .32rem 0 var(--accent-deep), 0 .55rem 1.1rem rgba(70,54,66,.16); cursor: pointer; transform-style: preserve-3d; transition: transform .3s ease, background .25s ease, box-shadow .15s ease; touch-action: manipulation; container-type: size; }
 .memory-card .card-back, .memory-card .card-front { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; }
-.memory-card .card-back { font-size: clamp(1.1rem, 4.2vh, 2.4rem); opacity: .8; }
-.memory-card .card-front { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.5rem, 6vh, 3.6rem); font-weight: 800; gap: .15rem; padding: .3rem; }
+.memory-card .card-back { font-size: min(32cqh, 40cqw); opacity: .8; }
+.memory-card .card-front { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Baloo 2', sans-serif; font-size: min(68cqh, 78cqw); font-weight: 800; gap: .15rem; padding: .3rem; }
+.memory-grid.numbers .memory-card .card-front { font-size: min(50cqh, 58cqw); }
 .memory-card .card-front .item-art { max-height: calc(72% * var(--planet-scale, 1)); max-width: 90%; }
 .memory-card .card-name { font-size: clamp(.7rem, 1.8vh, 1rem); }
 .memory-card.is-open { transform: rotateY(180deg); background: white; color: var(--accent-deep); box-shadow: 0 .28rem 0 color-mix(in srgb, var(--accent) 25%, transparent); }
@@ -120,7 +160,7 @@ button:focus-visible { outline: .32rem solid #3b3355; outline-offset: .3rem; }
 .find-wrap { flex: 1; min-height: 0; width: 100%; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; }
 .find-prompt { flex-shrink: 0; align-self: center; border: 0; background: white; color: var(--accent-deep); border-radius: 1.2rem; padding: .45rem 1.2rem .55rem; margin-bottom: .55rem; box-shadow: 0 .22rem .8rem rgba(70,54,66,.1); cursor: pointer; }
 .find-prompt small { display: block; font-weight: 800; opacity: .7; font-size: clamp(.8rem, 1.8vh, 1rem); }
-.find-prompt strong { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(1.6rem, 4.5vh, 2.6rem); line-height: 1; }
+.find-prompt strong { display: block; font-family: 'Baloo 2', sans-serif; font-size: clamp(2.1rem, 6.2vh, 3.6rem); line-height: 1; }
 .find-choices { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.6rem, 1.6vh, 1.1rem); }
 .find-card { width: min(100cqw, calc(100cqh * 3 / 4)); height: min(100cqh, calc(100cqw * 4 / 3)); max-width: 100%; max-height: 100%; aspect-ratio: 3 / 4; }
 .find-card.is-correct { background: #c8ec9a; color: #3d6b1f; box-shadow: 0 .28rem 0 #8fbe5c; }
@@ -159,7 +199,7 @@ body:has(.play-shell.is-space) .language-switch { display: none; }
 .win-card { transform: translateX(-50%); }
 
 @media (max-width: 700px) {
-  .game-grid, .subgame-grid, .subgame-grid.world { grid-template-columns: repeat(2, max-content); }
+  .game-grid, .subgame-grid, .subgame-grid.world, .story-grid { grid-template-columns: repeat(2, max-content); }
   .play-header { grid-template-columns: 3.2rem 1fr 6.4rem; gap: .3rem; }
   .back-button { width: 3.1rem; height: 3.1rem; font-size: 1.5rem; }
   .memory-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
