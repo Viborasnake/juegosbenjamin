@@ -276,16 +276,16 @@ function Home({ onSelect, locale }: { onSelect: (category: CategoryId) => void; 
             </div>
           )
         })}
+        <button className="stories-banner" type="button" onClick={() => onSelect('stories')}
+          aria-label={locale === 'es' ? 'Abrir cuentos de los tíos' : 'Open stories from the uncles'}>
+          <span className="game-icon" aria-hidden="true">{storiesMeta.icon}</span>
+          <span className="game-copy">
+            <small>{storiesMeta.eyebrow}</small>
+            <strong>{storiesMeta.title[locale]}</strong>
+            <span className="play-label">{storiesMeta.subtitle[locale]} <b aria-hidden="true">→</b></span>
+          </span>
+        </button>
       </section>
-      <button className="stories-banner" type="button" onClick={() => onSelect('stories')}
-        aria-label={locale === 'es' ? 'Abrir cuentos de los tíos' : 'Open stories from the uncles'}>
-        <span className="game-icon" aria-hidden="true">{storiesMeta.icon}</span>
-        <span className="game-copy">
-          <small>{storiesMeta.eyebrow}</small>
-          <strong>{storiesMeta.title[locale]}</strong>
-          <span className="play-label">{storiesMeta.subtitle[locale]} <b aria-hidden="true">→</b></span>
-        </span>
-      </button>
       <p className="grownup-note">{locale === 'es' ? 'Toca una tarjeta para comenzar' : 'Tap a card to begin'}</p>
     </main>
   )
